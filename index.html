@@ -22,10 +22,7 @@
             --orn-green: #2a9d8f;
         }
         
-        body { 
-            background-color: #ffffff; 
-            color: var(--orn-navy); 
-        }
+        body { background-color: #ffffff; color: var(--orn-navy); }
         
         .tf-card {
             background: #ffffff;
@@ -48,19 +45,6 @@
             border-bottom: 2px solid #f59e0b;
         }
         
-        .role-badge {
-            background: linear-gradient(135deg, var(--orn-blue), var(--orn-navy));
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .office-select {
-            min-width: 280px;
-        }
-        
         .flow-badge {
             display: inline-flex;
             align-items: center;
@@ -74,9 +58,26 @@
         .flow-outbound { background: #dbeafe; color: #1e40af; }
         .flow-domestic { background: #fef3c7; color: #92400e; }
         
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .type-tour { background: #e0e7ff; color: #3730a3; }
+        .type-fit { background: #fce7f3; color: #be185d; }
+        
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 280px;
+        }
+        
+        .chart-container-sm {
+            position: relative;
+            height: 200px;
         }
         
         .data-table th {
@@ -115,7 +116,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
         }
         
@@ -151,6 +152,42 @@
         
         .status-active { color: #16a34a; }
         .status-non-op { color: #9ca3af; }
+        
+        .hotel-rank {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .rank-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+        }
+        .rank-1 { background: #ffd700; }
+        .rank-2 { background: #c0c0c0; }
+        .rank-3 { background: #cd7f32; }
+        .rank-other { background: #e2e8f0; color: #64748b; }
+        
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            color: #0066cc;
+            border-bottom-color: #0066cc;
+        }
+        .tab-btn:hover:not(.active) {
+            color: #64748b;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-white">
@@ -164,7 +201,7 @@
         <div class="flex items-center gap-3">
             <i class="fas fa-info-circle text-amber-600"></i>
             <span class="text-sm font-medium text-amber-800">
-                <strong>Demo Data:</strong> All statistics and metrics shown are for demonstration purposes only. Data is simulated and does not represent actual business performance.
+                <strong>Demo Data:</strong> All statistics shown are for demonstration purposes only.
             </span>
         </div>
         <div class="flex items-center gap-2 text-xs text-amber-700">
@@ -179,7 +216,6 @@
     <div class="max-w-[1920px] mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-6">
-                <!-- ORN Logo -->
                 <div class="flex items-center gap-3">
                     <img src="orn-logo.png" alt="ORN" class="h-12 w-auto">
                     <div class="h-10 w-px bg-slate-300"></div>
@@ -187,21 +223,20 @@
                 </div>
                 <div class="h-10 w-px bg-slate-300 mx-2"></div>
                 <div>
-                    <h1 class="text-2xl font-bold orn-gradient-text">Global Business Intelligence</h1>
-                    <p class="text-xs text-slate-500 font-medium tracking-wider uppercase">Real-Time Performance Dashboard</p>
+                    <h1 class="text-2xl font-bold orn-gradient-text">Global Business Dashboard</h1>
+                    <p class="text-xs text-slate-500 font-medium tracking-wider uppercase">Real-Time Business Data</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-4">
-                <!-- Role Selector -->
                 <div class="flex items-center gap-2 bg-slate-100 rounded-lg p-1 border border-slate-200">
                     <span class="text-xs font-semibold text-slate-600 px-2">View As:</span>
                     <select id="roleSelector" onchange="changeRole(this.value)" class="bg-white border border-slate-300 rounded px-3 py-1.5 text-sm font-medium text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
                         <option value="board">Board / Global</option>
                         <option value="regional_europe">Regional Manager - Europe</option>
                         <option value="regional_middle_east">Regional Manager - Middle East</option>
-                        <option value="regional_asia_pacific">Regional Manager - Asia Pacific</option>
                         <option value="regional_south_asia">Regional Manager - South Asia</option>
+                        <option value="regional_asia_pacific">Regional Manager - Asia Pacific</option>
                         <option value="regional_americas">Regional Manager - Americas</option>
                         <option value="regional_oceania">Regional Manager - Oceania</option>
                     </select>
@@ -209,12 +244,12 @@
                 
                 <div class="flex items-center gap-2 px-3 py-1.5 bg-[#0066cc]/10 border border-[#0066cc] rounded-full">
                     <div class="pulse-dot"></div>
-                    <span class="text-xs font-bold text-[#0066cc] mono">LIVE DATA</span>
+                    <span class="text-xs font-bold text-[#0066cc] mono">LIVE</span>
                 </div>
                 
                 <button onclick="exportReport()" class="px-4 py-2 bg-[#0066cc] text-white rounded-lg text-sm font-bold hover:bg-[#1e3a5f] transition-all flex items-center gap-2 shadow-md">
                     <i class="fas fa-download"></i>
-                    Export Report
+                    Export
                 </button>
             </div>
         </div>
@@ -225,15 +260,13 @@
 <div class="filter-bar px-6 py-4 bg-white">
     <div class="max-w-[1920px] mx-auto">
         <div class="flex flex-wrap items-center gap-4">
-            <!-- Office Selector -->
             <div class="flex items-center gap-2">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Office:</span>
-                <select id="officeSelector" onchange="selectOffice(this.value)" class="office-select bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
+                <select id="officeSelector" onchange="selectOffice(this.value)" class="min-w-[280px] bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
                     <option value="all">All Offices (36 locations)</option>
                 </select>
             </div>
             
-            <!-- Date Range -->
             <div class="flex items-center gap-2">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Period:</span>
                 <select id="dateRange" onchange="updateDashboard()" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
@@ -245,18 +278,15 @@
                 </select>
             </div>
             
-            <!-- Flow Direction -->
             <div class="flex items-center gap-2">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Flow:</span>
                 <div class="flex gap-1">
                     <button onclick="setFlow('all')" id="flow-all" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0066cc] text-white border-2 border-[#0066cc]">All</button>
                     <button onclick="setFlow('inbound')" id="flow-inbound" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Inbound</button>
                     <button onclick="setFlow('outbound')" id="flow-outbound" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Outbound</button>
-                    <button onclick="setFlow('domestic')" id="flow-domestic" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Domestic</button>
                 </div>
             </div>
             
-            <!-- Destination Filter -->
             <div class="flex items-center gap-2 flex-1">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Destination:</span>
                 <select id="destinationFilter" onchange="updateDashboard()" class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] max-w-xs">
@@ -264,16 +294,20 @@
                 </select>
             </div>
             
-            <!-- Quick Stats Summary -->
             <div class="flex items-center gap-6 ml-auto bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
                 <div class="text-right">
-                    <div class="text-xs text-slate-500 font-medium">Active Bookings</div>
-                    <div class="text-lg font-bold text-[#1e3a5f] mono" id="headerActiveBookings">8,420</div>
+                    <div class="text-xs text-slate-500 font-medium">Bookings</div>
+                    <div class="text-lg font-bold text-[#1e3a5f] mono" id="headerBookings">0</div>
                 </div>
                 <div class="h-8 w-px bg-slate-300"></div>
                 <div class="text-right">
-                    <div class="text-xs text-slate-500 font-medium">Today's Revenue</div>
-                    <div class="text-lg font-bold text-[#2a9d8f] mono" id="headerRevenue">$1.24M</div>
+                    <div class="text-xs text-slate-500 font-medium">Revenue</div>
+                    <div class="text-lg font-bold text-[#2a9d8f] mono" id="headerRevenue">$0</div>
+                </div>
+                <div class="h-8 w-px bg-slate-300"></div>
+                <div class="text-right">
+                    <div class="text-xs text-slate-500 font-medium">Pax</div>
+                    <div class="text-lg font-bold text-[#0066cc] mono" id="headerPax">0</div>
                 </div>
             </div>
         </div>
@@ -293,102 +327,167 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-500">Access Level:</span>
+            <span class="text-xs text-slate-500">Access:</span>
             <span class="px-3 py-1 bg-[#0066cc] text-white rounded-full text-xs font-bold" id="accessLevelBadge">Global</span>
         </div>
     </div>
 
-    <!-- KPI Cards -->
+    <!-- Primary KPIs -->
     <section class="stats-grid">
-        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm">
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Total Bookings</div>
-                <span class="flow-badge flow-inbound"><i class="fas fa-arrow-down"></i> <span id="bookingsFlow">All</span></span>
+                <span class="flow-badge flow-inbound"><span id="bookingsFlow">All</span></span>
             </div>
-            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiBookings">8,420</div>
-            <div class="flex items-center gap-2 text-sm">
-                <span class="kpi-trend-up font-semibold flex items-center gap-1">
-                    <i class="fas fa-arrow-up"></i> 15.3%
-                </span>
+            <div class="text-2xl font-bold text-[#1e3a5f] mono mb-1" id="kpiBookings">0</div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1"><i class="fas fa-arrow-up"></i> 12.4%</span>
                 <span class="text-slate-400">vs last period</span>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-200">
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-500">Inbound: <strong class="text-[#1e3a5f]" id="inboundBookings">3,368</strong></span>
-                    <span class="text-slate-500">Outbound: <strong class="text-[#1e3a5f]" id="outboundBookings">5,052</strong></span>
-                </div>
+            <div class="mt-2 pt-2 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
+                <div><span class="text-slate-500">Tour:</span> <strong class="text-[#1e3a5f]" id="tourBookings">0</strong></div>
+                <div><span class="text-slate-500">FIT:</span> <strong class="text-[#1e3a5f]" id="fitBookings">0</strong></div>
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-green);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-green);">
+            <div class="flex justify-between items-start mb-2">
+                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Total Passengers</div>
+                <i class="fas fa-users text-[#2a9d8f]"></i>
+            </div>
+            <div class="text-2xl font-bold text-[#1e3a5f] mono mb-1" id="kpiPax">0</div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1"><i class="fas fa-arrow-up"></i> 8.7%</span>
+                <span class="text-slate-400">vs last period</span>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-200 text-xs">
+                <span class="text-slate-500">Avg per Booking:</span> <strong class="text-[#1e3a5f]" id="avgPaxPerBooking">2.4</strong>
+            </div>
+        </div>
+
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-cyan);">
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Revenue</div>
-                <i class="fas fa-dollar-sign text-[#2a9d8f]"></i>
+                <i class="fas fa-dollar-sign text-[#00bcd4]"></i>
             </div>
-            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiRevenue">$12.8M</div>
-            <div class="flex items-center gap-2 text-sm">
-                <span class="kpi-trend-up font-semibold flex items-center gap-1">
-                    <i class="fas fa-arrow-up"></i> 11.7%
-                </span>
+            <div class="text-2xl font-bold text-[#1e3a5f] mono mb-1" id="kpiRevenue">$0M</div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1"><i class="fas fa-arrow-up"></i> 11.2%</span>
                 <span class="text-slate-400">vs last period</span>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-200">
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-500">Avg Value: <strong class="text-[#1e3a5f]" id="avgBookingValue">$1,520</strong></span>
-                    <span class="text-slate-500">Target: <strong class="text-[#1e3a5f]">$15M</strong></span>
-                </div>
+            <div class="mt-2 pt-2 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
+                <div><span class="text-slate-500">Avg Value:</span> <strong class="text-[#1e3a5f]" id="avgBookingValue">$0</strong></div>
+                <div><span class="text-slate-500">Per Pax:</span> <strong class="text-[#1e3a5f]" id="revenuePerPax">$0</strong></div>
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-yellow);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-yellow);">
             <div class="flex justify-between items-start mb-2">
-                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Conversion Rate</div>
-                <i class="fas fa-percentage text-[#ffb703]"></i>
+                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Avg Duration</div>
+                <i class="fas fa-clock text-[#ffb703]"></i>
             </div>
-            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiConversion">16.8%</div>
-            <div class="flex items-center gap-2 text-sm">
-                <span class="kpi-trend-up font-semibold flex items-center gap-1">
-                    <i class="fas fa-arrow-up"></i> 1.2%
-                </span>
+            <div class="text-2xl font-bold text-[#1e3a5f] mono mb-1" id="kpiDuration">7.2 <span class="text-sm">days</span></div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1"><i class="fas fa-arrow-up"></i> 0.3</span>
                 <span class="text-slate-400">vs last period</span>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-200">
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-500">Enquiries: <strong class="text-[#1e3a5f]" id="totalEnquiries">50,119</strong></span>
-                    <span class="text-slate-500">Target: <strong class="text-[#1e3a5f]">18%</strong></span>
-                </div>
+            <div class="mt-2 pt-2 border-t border-slate-200 text-xs">
+                <span class="text-slate-500">Most Common:</span> <strong class="text-[#1e3a5f]">5-7 nights</strong>
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-red);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-lime);">
+            <div class="flex justify-between items-start mb-2">
+                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Conversion</div>
+                <i class="fas fa-percentage text-[#cddc39]"></i>
+            </div>
+            <div class="text-2xl font-bold text-[#1e3a5f] mono mb-1" id="kpiConversion">16.8%</div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1"><i class="fas fa-arrow-up"></i> 1.2%</span>
+                <span class="text-slate-400">vs last period</span>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-200 text-xs">
+                <span class="text-slate-500">Enquiries:</span> <strong class="text-[#1e3a5f]" id="totalEnquiries">0</strong>
+            </div>
+        </div>
+
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-red);">
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Gross Margin</div>
                 <i class="fas fa-chart-line text-[#e63946]"></i>
             </div>
-            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiMargin">17.5%</div>
-            <div class="flex items-center gap-2 text-sm">
-                <span class="kpi-trend-down font-semibold flex items-center gap-1">
-                    <i class="fas fa-arrow-down"></i> 0.3%
-                </span>
+            <div class="text-2xl font-bold text-[#1e3a5f] mono mb-1" id="kpiMargin">17.5%</div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="kpi-trend-down font-semibold flex items-center gap-1"><i class="fas fa-arrow-down"></i> 0.3%</span>
                 <span class="text-slate-400">vs last period</span>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-200">
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-500">Profit: <strong class="text-[#1e3a5f]" id="grossProfit">$2.24M</strong></span>
-                    <span class="text-slate-500">Target: <strong class="text-[#1e3a5f]">20%</strong></span>
-                </div>
+            <div class="mt-2 pt-2 border-t border-slate-200 text-xs">
+                <span class="text-slate-500">Profit:</span> <strong class="text-[#1e3a5f]" id="grossProfit">$0</strong>
             </div>
         </div>
     </section>
 
-    <!-- Charts Row -->
+    <!-- Booking Trends & Tour vs FIT -->
+    <div class="grid grid-cols-3 gap-6">
+        <!-- Booking Trends -->
+        <div class="tf-card rounded-xl p-6 col-span-2">
+            <div class="flex justify-between items-center mb-2">
+                <div>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Booking & Passenger Trends</h3>
+                    <p class="table-description">Monthly booking volume and passenger numbers with growth trajectory</p>
+                </div>
+                <select id="trendMetric" onchange="updateDashboard()" class="text-xs border border-slate-300 rounded px-2 py-1">
+                    <option value="bookings">Bookings</option>
+                    <option value="pax">Passengers</option>
+                    <option value="revenue">Revenue</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tour vs FIT Breakdown -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="mb-2">
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Tour vs FIT Split</h3>
+                <p class="table-description">Package tours vs independent travel bookings by volume and revenue</p>
+            </div>
+            <div class="chart-container-sm mb-4">
+                <canvas id="tourFitChart"></canvas>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <div class="flex items-center gap-2">
+                        <span class="type-badge type-tour">TOUR</span>
+                        <span class="text-sm font-semibold">Package Tours</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-[#1e3a5f] mono" id="tourPercentage">62%</div>
+                        <div class="text-xs text-slate-500" id="tourCount">3,420 bookings</div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-pink-50 rounded-lg border border-pink-200">
+                    <div class="flex items-center gap-2">
+                        <span class="type-badge type-fit">FIT</span>
+                        <span class="text-sm font-semibold">Independent</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-[#1e3a5f] mono" id="fitPercentage">38%</div>
+                        <div class="text-xs text-slate-500" id="fitCount">2,096 bookings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue by Office & Duration Distribution -->
     <div class="grid grid-cols-2 gap-6">
-        <!-- Revenue by Office -->
         <div class="tf-card rounded-xl p-6">
             <div class="flex justify-between items-center mb-2">
                 <div>
                     <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Revenue by Office</h3>
-                    <p class="table-description">Total revenue generated by each office for the selected period and filters</p>
+                    <p class="table-description">Total revenue contribution by office location for selected period</p>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="toggleChartType('revenue', 'bar')" class="text-xs px-2 py-1 bg-[#0066cc] text-white rounded">Bar</button>
@@ -400,85 +499,95 @@
             </div>
         </div>
 
-        <!-- Bookings Trend -->
         <div class="tf-card rounded-xl p-6">
-            <div class="flex justify-between items-center mb-2">
-                <div>
-                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Booking Trends</h3>
-                    <p class="table-description">Monthly booking volume filtered by selected office, flow and destination</p>
-                </div>
-                <select id="trendMetric" onchange="updateDashboard()" class="text-xs border border-slate-300 rounded px-2 py-1">
-                    <option value="bookings">Bookings</option>
-                    <option value="revenue">Revenue</option>
-                    <option value="enquiries">Enquiries</option>
-                </select>
+            <div class="mb-2">
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Trip Duration Distribution</h3>
+                <p class="table-description">Breakdown of bookings by length of stay in nights</p>
             </div>
             <div class="chart-container">
-                <canvas id="trendChart"></canvas>
+                <canvas id="durationChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Regional Performance & Office Status -->
+    <!-- Top Hotels & Flights -->
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Top Hotel Chains -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Hotel Chains</h3>
+                    <p class="table-description">Most booked hotel chains by room nights and revenue contribution</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="setHotelFilter('all')" class="text-xs px-2 py-1 bg-[#0066cc] text-white rounded">All</button>
+                    <button onclick="setHotelFilter('inbound')" class="text-xs px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Inbound</button>
+                    <button onclick="setHotelFilter('outbound')" class="text-xs px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Outbound</button>
+                </div>
+            </div>
+            <div class="space-y-3" id="hotelChainsList">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <!-- Top Airlines -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Airlines</h3>
+                    <p class="table-description">Most used airlines by passenger numbers and routes</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="setAirlineFilter('all')" class="text-xs px-2 py-1 bg-[#0066cc] text-white rounded">All</button>
+                    <button onclick="setAirlineFilter('inbound')" class="text-xs px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Inbound</button>
+                    <button onclick="setAirlineFilter('outbound')" class="text-xs px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Outbound</button>
+                </div>
+            </div>
+            <div class="space-y-3" id="airlinesList">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Regional Performance with Granular Data -->
+    <div class="tf-card rounded-xl p-6">
+        <div class="flex justify-between items-center mb-2">
+            <div>
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Regional Performance Detail</h3>
+                <p class="table-description">Comprehensive metrics by region including passengers, duration, and booking types</p>
+            </div>
+            <button onclick="exportRegionalData()" class="text-xs text-[#0066cc] font-semibold hover:underline">
+                <i class="fas fa-download mr-1"></i>Export
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm data-table">
+                <thead>
+                    <tr class="border-b border-slate-200">
+                        <th class="text-left py-3 px-4">Region</th>
+                        <th class="text-center py-3 px-4">Offices</th>
+                        <th class="text-right py-3 px-4">Bookings</th>
+                        <th class="text-right py-3 px-4">Passengers</th>
+                        <th class="text-right py-3 px-4">Revenue</th>
+                        <th class="text-center py-3 px-4">Avg Duration</th>
+                        <th class="text-center py-3 px-4">Tour/FIT</th>
+                        <th class="text-right py-3 px-4">Avg Value</th>
+                    </tr>
+                </thead>
+                <tbody id="regionalTable">
+                    <!-- Generated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Destination Performance with Cost Analysis -->
     <div class="grid grid-cols-3 gap-6">
-        <!-- Regional Breakdown -->
         <div class="tf-card rounded-xl p-6 col-span-2">
             <div class="flex justify-between items-center mb-2">
                 <div>
-                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Regional Performance</h3>
-                    <p class="table-description">Comparative metrics across all regions based on current filter selections</p>
-                </div>
-                <button onclick="viewAllRegions()" class="text-xs text-[#0066cc] font-semibold hover:underline">View Details</button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm data-table">
-                    <thead>
-                        <tr class="border-b border-slate-200">
-                            <th class="text-left py-3 px-4">Region</th>
-                            <th class="text-center py-3 px-4">Offices</th>
-                            <th class="text-right py-3 px-4">Bookings</th>
-                            <th class="text-right py-3 px-4">Revenue</th>
-                            <th class="text-right py-3 px-4">Avg Value</th>
-                            <th class="text-center py-3 px-4">Top Office</th>
-                        </tr>
-                    </thead>
-                    <tbody id="regionalTable">
-                        <!-- Generated by JS -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Office Status Overview -->
-        <div class="tf-card rounded-xl p-6">
-            <div class="mb-2">
-                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Office Status</h3>
-                <p class="table-description">Distribution of offices by operational tier and status</p>
-            </div>
-            <div class="space-y-4" id="officeStatusOverview">
-                <!-- Generated by JS -->
-            </div>
-            <div class="mt-4 pt-4 border-t border-slate-200">
-                <div class="flex justify-between items-center text-xs mb-2">
-                    <span class="text-slate-500">Total Offices</span>
-                    <span class="font-bold text-[#1e3a5f]">36</span>
-                </div>
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-slate-500">Active Staff</span>
-                    <span class="font-bold text-[#2a9d8f]">913</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Top Destinations & Office Leaderboard -->
-    <div class="grid grid-cols-2 gap-6">
-        <!-- Top Destinations -->
-        <div class="tf-card rounded-xl p-6">
-            <div class="flex justify-between items-center mb-2">
-                <div>
-                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Performing Destinations</h3>
-                    <p class="table-description">Destinations ranked by revenue, filtered by selected office and flow direction</p>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Destination Cost Analysis</h3>
+                    <p class="table-description">Average cost per holiday, duration, and passenger count by destination</p>
                 </div>
                 <button onclick="viewAllDestinations()" class="text-xs text-[#0066cc] font-semibold hover:underline">View All</button>
             </div>
@@ -488,7 +597,10 @@
                         <tr class="border-b border-slate-200">
                             <th class="text-left py-3 px-4">Destination</th>
                             <th class="text-right py-3 px-4">Bookings</th>
-                            <th class="text-right py-3 px-4">Revenue</th>
+                            <th class="text-right py-3 px-4">Pax</th>
+                            <th class="text-center py-3 px-4">Duration</th>
+                            <th class="text-right py-3 px-4">Avg Cost</th>
+                            <th class="text-center py-3 px-4">Type</th>
                             <th class="text-center py-3 px-4">Trend</th>
                         </tr>
                     </thead>
@@ -502,8 +614,8 @@
         <!-- Office Leaderboard -->
         <div class="tf-card rounded-xl p-6">
             <div class="mb-2">
-                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Performing Offices</h3>
-                <p class="table-description">Offices ranked by total revenue contribution within selected filters</p>
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Offices by Passengers</h3>
+                <p class="table-description">Offices ranked by total passenger volume</p>
             </div>
             <div class="space-y-3" id="officeLeaderboard">
                 <!-- Generated by JS -->
@@ -511,45 +623,81 @@
         </div>
     </div>
 
-    <!-- Detailed Office List -->
+    <!-- Flight Route Analysis -->
     <div class="tf-card rounded-xl p-6">
-        <div class="flex justify-between items-center mb-2">
+        <div class="flex justify-between items-center mb-4">
             <div>
-                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Office Directory</h3>
-                <p class="table-description">Complete list of all offices with current performance metrics and operational status</p>
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Flight Routes</h3>
+                <p class="table-description">Most popular flight segments by booking volume and passenger flow</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="filterOfficeList('all')" class="text-xs px-3 py-1.5 bg-[#0066cc] text-white rounded">All</button>
-                <button onclick="filterOfficeList('active')" class="text-xs px-3 py-1.5 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Active Only</button>
-                <button onclick="filterOfficeList('tier1')" class="text-xs px-3 py-1.5 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Tier 1</button>
+                <button onclick="setRouteFilter('all')" id="route-all" class="tab-btn active">All Routes</button>
+                <button onclick="setRouteFilter('inbound')" id="route-inbound" class="tab-btn">Inbound</button>
+                <button onclick="setRouteFilter('outbound')" id="route-outbound" class="tab-btn">Outbound</button>
             </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm data-table">
                 <thead>
                     <tr class="border-b border-slate-200">
-                        <th class="text-left py-3 px-4">Office</th>
-                        <th class="text-center py-3 px-4">Tier</th>
-                        <th class="text-center py-3 px-4">Status</th>
-                        <th class="text-right py-3 px-4">Staff</th>
+                        <th class="text-left py-3 px-4">Route</th>
+                        <th class="text-center py-3 px-4">Direction</th>
                         <th class="text-right py-3 px-4">Bookings</th>
-                        <th class="text-right py-3 px-4">Revenue</th>
-                        <th class="text-center py-3 px-4">Manager</th>
+                        <th class="text-right py-3 px-4">Passengers</th>
+                        <th class="text-center py-3 px-4">Airline</th>
+                        <th class="text-right py-3 px-4">Avg Fare</th>
+                        <th class="text-center py-3 px-4">Top Office</th>
                     </tr>
                 </thead>
-                <tbody id="officeDirectoryTable">
+                <tbody id="flightRoutesTable">
                     <!-- Generated by JS -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Recent Activity -->
+    <!-- Hotel Performance by Destination -->
+    <div class="tf-card rounded-xl p-6">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Hotel Performance by Destination</h3>
+                <p class="table-description">Top performing hotels and chains in key destinations with occupancy and ADR</p>
+            </div>
+            <select id="hotelDestFilter" onchange="updateHotelPerformance()" class="text-xs border border-slate-300 rounded px-2 py-1">
+                <option value="all">All Destinations</option>
+                <option value="Maldives">Maldives</option>
+                <option value="Thailand">Thailand</option>
+                <option value="Dubai">Dubai</option>
+                <option value="Singapore">Singapore</option>
+                <option value="Bali">Bali</option>
+            </select>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm data-table">
+                <thead>
+                    <tr class="border-b border-slate-200">
+                        <th class="text-left py-3 px-4">Hotel / Chain</th>
+                        <th class="text-center py-3 px-4">Destination</th>
+                        <th class="text-right py-3 px-4">Room Nights</th>
+                        <th class="text-right py-3 px-4">ADR</th>
+                        <th class="text-right py-3 px-4">Revenue</th>
+                        <th class="text-center py-3 px-4">Occupancy</th>
+                        <th class="text-center py-3 px-4">Top Source</th>
+                    </tr>
+                </thead>
+                <tbody id="hotelPerformanceTable">
+                    <!-- Generated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Bookings Detail -->
     <div class="tf-card rounded-xl p-6">
         <div class="flex justify-between items-center mb-2">
             <div>
-                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Recent High-Value Bookings</h3>
-                <p class="table-description">Latest bookings over $2,000 filtered by selected office, destination and flow type</p>
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Recent Bookings Detail</h3>
+                <p class="table-description">Latest bookings with passenger count, duration, hotel, and flight details</p>
             </div>
             <span class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Last 24 hours</span>
         </div>
@@ -559,11 +707,13 @@
                     <tr class="border-b border-slate-200">
                         <th class="text-left py-3 px-4">Booking ID</th>
                         <th class="text-left py-3 px-4">Customer</th>
+                        <th class="text-center py-3 px-4">Pax</th>
+                        <th class="text-center py-3 px-4">Duration</th>
                         <th class="text-left py-3 px-4">Destination</th>
-                        <th class="text-center py-3 px-4">Office</th>
+                        <th class="text-left py-3 px-4">Hotel</th>
+                        <th class="text-center py-3 px-4">Airline</th>
                         <th class="text-center py-3 px-4">Type</th>
                         <th class="text-right py-3 px-4">Value</th>
-                        <th class="text-center py-3 px-4">Status</th>
                     </tr>
                 </thead>
                 <tbody id="recentBookingsTable">
@@ -579,7 +729,7 @@
         <div class="h-6 w-px bg-slate-300"></div>
         <img src="tripfactory-logo.png" alt="TripFactory" class="h-6 w-auto opacity-60 hover:opacity-100 transition-opacity">
         <div class="h-6 w-px bg-slate-300"></div>
-        <span class="text-xs text-slate-400">Powered by ORN Global Network • 36 Offices • 913 Staff</span>
+        <span class="text-xs text-slate-400">ORN Global Network • 36 Offices • 913 Staff • 2.4M Passengers Annually</span>
     </div>
 </main>
 
@@ -592,55 +742,44 @@
 </div>
 
 <script>
-// Complete ORN Office Data - All 36 Offices
+// Complete ORN Office Data
 const officeData = {
-    // Europe (11 offices)
-    uk: { name: 'United Kingdom', city: 'London', country: 'UK', region: 'Europe', tier: '2', status: 'active', staff: 4, manager: 'Ajay Kawa', email: 'ajay.kawa@tripfactory.com', baseMetrics: { bookings: 420, revenue: 680000, enquiries: 2800, conversion: 15.0, margin: 18.2 } },
-    germany: { name: 'Germany', city: 'Frankfurt', country: 'Germany', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 85, revenue: 136000, enquiries: 567, conversion: 15.0, margin: 17.8 } },
-    france: { name: 'France', city: 'Paris', country: 'France', region: 'Europe', tier: '2', status: 'active', staff: 5, manager: 'TBD', baseMetrics: { bookings: 195, revenue: 312000, enquiries: 1300, conversion: 15.0, margin: 18.0 } },
-    italy: { name: 'Italy', city: 'Rome', country: 'Italy', region: 'Europe', tier: '2', status: 'active', staff: 6, manager: 'TBD', baseMetrics: { bookings: 234, revenue: 374400, enquiries: 1560, conversion: 15.0, margin: 17.9 } },
-    czech: { name: 'Czech Republic', city: 'Prague', country: 'Czech Republic', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 65, revenue: 104000, enquiries: 433, conversion: 15.0, margin: 17.5 } },
-    poland: { name: 'Poland', city: 'Warsaw', country: 'Poland', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 58, revenue: 92800, enquiries: 387, conversion: 15.0, margin: 17.5 } },
-    slovakia: { name: 'Slovakia', city: 'Bratislava', country: 'Slovakia', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 42, revenue: 67200, enquiries: 280, conversion: 15.0, margin: 17.5 } },
-    greece: { name: 'Greece', city: 'Athens', country: 'Greece', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 78, revenue: 124800, enquiries: 520, conversion: 15.0, margin: 18.1 } },
-    bulgaria: { name: 'Bulgaria', city: 'Sofia', country: 'Bulgaria', region: 'Europe', tier: '2', status: 'active', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    turkey: { name: 'Turkey', city: 'Istanbul', country: 'Turkey', region: 'Europe', tier: '2', status: 'active', staff: 9, manager: 'TBD', baseMetrics: { bookings: 351, revenue: 561600, enquiries: 2340, conversion: 15.0, margin: 18.3 } },
-    spain: { name: 'Spain', city: 'Madrid', country: 'Spain', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    switzerland: { name: 'Switzerland', city: 'Zurich', country: 'Switzerland', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    ireland: { name: 'Ireland', city: 'Dublin', country: 'Ireland', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    austria: { name: 'Austria', city: 'Vienna', country: 'Austria', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    croatia: { name: 'Croatia', city: 'Zagreb', country: 'Croatia', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    
-    // Middle East (4 offices)
-    uae: { name: 'UAE', city: 'Dubai', country: 'UAE', region: 'Middle East', tier: '2', status: 'active', staff: 4, manager: 'Ali Asger Lightwala', baseMetrics: { bookings: 312, revenue: 468000, enquiries: 2080, conversion: 15.0, margin: 18.5 } },
-    bahrain: { name: 'Bahrain', city: 'Manama', country: 'Bahrain', region: 'Middle East', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 45, revenue: 72000, enquiries: 300, conversion: 15.0, margin: 18.0 } },
-    qatar: { name: 'Qatar', city: 'Doha', country: 'Qatar', region: 'Middle East', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    oman: { name: 'Oman', city: 'Muscat', country: 'Oman', region: 'Middle East', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    
-    // South Asia (1 office)
-    india: { name: 'India', city: 'Bengaluru', country: 'India', region: 'South Asia', tier: '1', status: 'active', staff: 698, manager: 'Amit Aggarwal', baseMetrics: { bookings: 2842, revenue: 4263000, enquiries: 18947, conversion: 15.0, margin: 16.8 } },
-    
-    // Asia Pacific (7 offices)
-    singapore: { name: 'Singapore', city: 'Singapore', country: 'Singapore', region: 'Asia Pacific', tier: '3', status: 'active', staff: 3, manager: 'Vinay Gupta', baseMetrics: { bookings: 135, revenue: 216000, enquiries: 900, conversion: 15.0, margin: 19.5 } },
-    malaysia: { name: 'Malaysia', city: 'Kuala Lumpur', country: 'Malaysia', region: 'Asia Pacific', tier: '3', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 52, revenue: 83200, enquiries: 347, conversion: 15.0, margin: 18.2 } },
-    thailand: { name: 'Thailand', city: 'Bangkok', country: 'Thailand', region: 'Asia Pacific', tier: '2', status: 'active', staff: 7, manager: 'Local Partner', baseMetrics: { bookings: 273, revenue: 436800, enquiries: 1820, conversion: 15.0, margin: 18.8 } },
-    indonesia: { name: 'Indonesia', city: 'Bali', country: 'Indonesia', region: 'Asia Pacific', tier: '2', status: 'active', staff: 8, manager: 'TBD', baseMetrics: { bookings: 312, revenue: 499200, enquiries: 2080, conversion: 15.0, margin: 18.9 } },
-    philippines: { name: 'Philippines', city: 'Manila', country: 'Philippines', region: 'Asia Pacific', tier: '2', status: 'active', staff: 17, manager: 'TBD', baseMetrics: { bookings: 663, revenue: 1060800, enquiries: 4420, conversion: 15.0, margin: 17.5 } },
-    hongkong: { name: 'Hong Kong', city: 'Hong Kong', country: 'Hong Kong', region: 'Asia Pacific', tier: '2', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    
-    // Americas (7 offices)
-    usa: { name: 'United States', city: 'New York', country: 'USA', region: 'Americas', tier: '1', status: 'active', staff: 64, manager: 'Regional Director', baseMetrics: { bookings: 1560, revenue: 2496000, enquiries: 10400, conversion: 15.0, margin: 18.2 } },
-    peru: { name: 'Peru', city: 'Lima', country: 'Peru', region: 'Americas', tier: '2', status: 'active', staff: 30, manager: 'TBD', baseMetrics: { bookings: 585, revenue: 936000, enquiries: 3900, conversion: 15.0, margin: 17.8 } },
-    argentina: { name: 'Argentina', city: 'Buenos Aires', country: 'Argentina', region: 'Americas', tier: '2', status: 'active', staff: 6, manager: 'TBD', baseMetrics: { bookings: 234, revenue: 374400, enquiries: 1560, conversion: 15.0, margin: 17.5 } },
-    mexico: { name: 'Mexico', city: 'Mexico City', country: 'Mexico', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    brazil: { name: 'Brazil', city: 'São Paulo', country: 'Brazil', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    colombia: { name: 'Colombia', city: 'Bogotá', country: 'Colombia', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    ecuador: { name: 'Ecuador', city: 'Quito', country: 'Ecuador', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    chile: { name: 'Chile', city: 'Santiago', country: 'Chile', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
-    
-    // Oceania (2 offices)
-    australia: { name: 'Australia', city: 'Sydney', country: 'Australia', region: 'Oceania', tier: '2', status: 'active', staff: 23, manager: 'Regional Director', baseMetrics: { bookings: 897, revenue: 1435200, enquiries: 5980, conversion: 15.0, margin: 18.5 } },
-    newzealand: { name: 'New Zealand', city: 'Auckland', country: 'New Zealand', region: 'Oceania', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } }
+    uk: { name: 'United Kingdom', city: 'London', country: 'UK', region: 'Europe', tier: '2', status: 'active', staff: 4, manager: 'Ajay Kawa', baseMetrics: { bookings: 420, pax: 1008, revenue: 680000, enquiries: 2800, conversion: 15.0, margin: 18.2, avgDuration: 6.5 } },
+    germany: { name: 'Germany', city: 'Frankfurt', country: 'Germany', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 85, pax: 204, revenue: 136000, enquiries: 567, conversion: 15.0, margin: 17.8, avgDuration: 7.2 } },
+    france: { name: 'France', city: 'Paris', country: 'France', region: 'Europe', tier: '2', status: 'active', staff: 5, manager: 'TBD', baseMetrics: { bookings: 195, pax: 468, revenue: 312000, enquiries: 1300, conversion: 15.0, margin: 18.0, avgDuration: 6.8 } },
+    italy: { name: 'Italy', city: 'Rome', country: 'Italy', region: 'Europe', tier: '2', status: 'active', staff: 6, manager: 'TBD', baseMetrics: { bookings: 234, pax: 562, revenue: 374400, enquiries: 1560, conversion: 15.0, margin: 17.9, avgDuration: 7.0 } },
+    czech: { name: 'Czech Republic', city: 'Prague', country: 'Czech Republic', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 65, pax: 156, revenue: 104000, enquiries: 433, conversion: 15.0, margin: 17.5, avgDuration: 5.5 } },
+    poland: { name: 'Poland', city: 'Warsaw', country: 'Poland', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 58, pax: 139, revenue: 92800, enquiries: 387, conversion: 15.0, margin: 17.5, avgDuration: 6.0 } },
+    slovakia: { name: 'Slovakia', city: 'Bratislava', country: 'Slovakia', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 42, pax: 101, revenue: 67200, enquiries: 280, conversion: 15.0, margin: 17.5, avgDuration: 5.8 } },
+    greece: { name: 'Greece', city: 'Athens', country: 'Greece', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 78, pax: 187, revenue: 124800, enquiries: 520, conversion: 15.0, margin: 18.1, avgDuration: 7.5 } },
+    bulgaria: { name: 'Bulgaria', city: 'Sofia', country: 'Bulgaria', region: 'Europe', tier: '2', status: 'active', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    turkey: { name: 'Turkey', city: 'Istanbul', country: 'Turkey', region: 'Europe', tier: '2', status: 'active', staff: 9, manager: 'TBD', baseMetrics: { bookings: 351, pax: 842, revenue: 561600, enquiries: 2340, conversion: 15.0, margin: 18.3, avgDuration: 8.2 } },
+    spain: { name: 'Spain', city: 'Madrid', country: 'Spain', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    switzerland: { name: 'Switzerland', city: 'Zurich', country: 'Switzerland', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    ireland: { name: 'Ireland', city: 'Dublin', country: 'Ireland', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    austria: { name: 'Austria', city: 'Vienna', country: 'Austria', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    croatia: { name: 'Croatia', city: 'Zagreb', country: 'Croatia', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    uae: { name: 'UAE', city: 'Dubai', country: 'UAE', region: 'Middle East', tier: '2', status: 'active', staff: 4, manager: 'Ali Asger Lightwala', baseMetrics: { bookings: 312, pax: 749, revenue: 468000, enquiries: 2080, conversion: 15.0, margin: 18.5, avgDuration: 5.5 } },
+    bahrain: { name: 'Bahrain', city: 'Manama', country: 'Bahrain', region: 'Middle East', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 45, pax: 108, revenue: 72000, enquiries: 300, conversion: 15.0, margin: 18.0, avgDuration: 4.5 } },
+    qatar: { name: 'Qatar', city: 'Doha', country: 'Qatar', region: 'Middle East', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    oman: { name: 'Oman', city: 'Muscat', country: 'Oman', region: 'Middle East', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    india: { name: 'India', city: 'Bengaluru', country: 'India', region: 'South Asia', tier: '1', status: 'active', staff: 698, manager: 'Amit Aggarwal', baseMetrics: { bookings: 2842, pax: 6821, revenue: 4263000, enquiries: 18947, conversion: 15.0, margin: 16.8, avgDuration: 6.8 } },
+    singapore: { name: 'Singapore', city: 'Singapore', country: 'Singapore', region: 'Asia Pacific', tier: '3', status: 'active', staff: 3, manager: 'Vinay Gupta', baseMetrics: { bookings: 135, pax: 324, revenue: 216000, enquiries: 900, conversion: 15.0, margin: 19.5, avgDuration: 5.2 } },
+    malaysia: { name: 'Malaysia', city: 'Kuala Lumpur', country: 'Malaysia', region: 'Asia Pacific', tier: '3', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 52, pax: 125, revenue: 83200, enquiries: 347, conversion: 15.0, margin: 18.2, avgDuration: 5.0 } },
+    thailand: { name: 'Thailand', city: 'Bangkok', country: 'Thailand', region: 'Asia Pacific', tier: '2', status: 'active', staff: 7, manager: 'Local Partner', baseMetrics: { bookings: 273, pax: 655, revenue: 436800, enquiries: 1820, conversion: 15.0, margin: 18.8, avgDuration: 6.5 } },
+    indonesia: { name: 'Indonesia', city: 'Bali', country: 'Indonesia', region: 'Asia Pacific', tier: '2', status: 'active', staff: 8, manager: 'TBD', baseMetrics: { bookings: 312, pax: 749, revenue: 499200, enquiries: 2080, conversion: 15.0, margin: 18.9, avgDuration: 7.0 } },
+    philippines: { name: 'Philippines', city: 'Manila', country: 'Philippines', region: 'Asia Pacific', tier: '2', status: 'active', staff: 17, manager: 'TBD', baseMetrics: { bookings: 663, pax: 1591, revenue: 1060800, enquiries: 4420, conversion: 15.0, margin: 17.5, avgDuration: 6.2 } },
+    hongkong: { name: 'Hong Kong', city: 'Hong Kong', country: 'Hong Kong', region: 'Asia Pacific', tier: '2', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    usa: { name: 'United States', city: 'New York', country: 'USA', region: 'Americas', tier: '1', status: 'active', staff: 64, manager: 'Regional Director', baseMetrics: { bookings: 1560, pax: 3744, revenue: 2496000, enquiries: 10400, conversion: 15.0, margin: 18.2, avgDuration: 8.5 } },
+    peru: { name: 'Peru', city: 'Lima', country: 'Peru', region: 'Americas', tier: '2', status: 'active', staff: 30, manager: 'TBD', baseMetrics: { bookings: 585, pax: 1404, revenue: 936000, enquiries: 3900, conversion: 15.0, margin: 17.8, avgDuration: 9.2 } },
+    argentina: { name: 'Argentina', city: 'Buenos Aires', country: 'Argentina', region: 'Americas', tier: '2', status: 'active', staff: 6, manager: 'TBD', baseMetrics: { bookings: 234, pax: 562, revenue: 374400, enquiries: 1560, conversion: 15.0, margin: 17.5, avgDuration: 10.5 } },
+    mexico: { name: 'Mexico', city: 'Mexico City', country: 'Mexico', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    brazil: { name: 'Brazil', city: 'São Paulo', country: 'Brazil', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    colombia: { name: 'Colombia', city: 'Bogotá', country: 'Colombia', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    ecuador: { name: 'Ecuador', city: 'Quito', country: 'Ecuador', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    chile: { name: 'Chile', city: 'Santiago', country: 'Chile', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } },
+    australia: { name: 'Australia', city: 'Sydney', country: 'Australia', region: 'Oceania', tier: '2', status: 'active', staff: 23, manager: 'Regional Director', baseMetrics: { bookings: 897, pax: 2153, revenue: 1435200, enquiries: 5980, conversion: 15.0, margin: 18.5, avgDuration: 12.3 } },
+    newzealand: { name: 'New Zealand', city: 'Auckland', country: 'New Zealand', region: 'Oceania', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, pax: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0, avgDuration: 0 } }
 };
 
 // Regional Access Mapping
@@ -655,68 +794,69 @@ const regionalAccess = {
 
 // Role Configurations
 const roleConfig = {
-    'board': { 
-        name: 'Board / Global View', 
-        description: 'Full access to all 36 offices worldwide',
-        access: 'Global',
-        offices: Object.keys(officeData)
-    },
-    'regional_europe': { 
-        name: 'Regional Manager - Europe', 
-        description: 'Access to 15 European offices',
-        access: 'Regional',
-        offices: regionalAccess.regional_europe
-    },
-    'regional_middle_east': { 
-        name: 'Regional Manager - Middle East', 
-        description: 'Access to 4 Middle East offices',
-        access: 'Regional',
-        offices: regionalAccess.regional_middle_east
-    },
-    'regional_south_asia': { 
-        name: 'Regional Manager - South Asia', 
-        description: 'Access to India office (Tier 1 Strategic)',
-        access: 'Regional',
-        offices: regionalAccess.regional_south_asia
-    },
-    'regional_asia_pacific': { 
-        name: 'Regional Manager - Asia Pacific', 
-        description: 'Access to 6 Asia Pacific offices',
-        access: 'Regional',
-        offices: regionalAccess.regional_asia_pacific
-    },
-    'regional_americas': { 
-        name: 'Regional Manager - Americas', 
-        description: 'Access to 8 Americas offices',
-        access: 'Regional',
-        offices: regionalAccess.regional_americas
-    },
-    'regional_oceania': { 
-        name: 'Regional Manager - Oceania', 
-        description: 'Access to Australia and New Zealand',
-        access: 'Regional',
-        offices: regionalAccess.regional_oceania
-    }
+    'board': { name: 'Board / Global View', description: 'Full access to all 36 offices worldwide', access: 'Global', offices: Object.keys(officeData) },
+    'regional_europe': { name: 'Regional Manager - Europe', description: 'Access to 15 European offices', access: 'Regional', offices: regionalAccess.regional_europe },
+    'regional_middle_east': { name: 'Regional Manager - Middle East', description: 'Access to 4 Middle East offices', access: 'Regional', offices: regionalAccess.regional_middle_east },
+    'regional_south_asia': { name: 'Regional Manager - South Asia', description: 'Access to India office (Tier 1 Strategic)', access: 'Regional', offices: regionalAccess.regional_south_asia },
+    'regional_asia_pacific': { name: 'Regional Manager - Asia Pacific', description: 'Access to 6 Asia Pacific offices', access: 'Regional', offices: regionalAccess.regional_asia_pacific },
+    'regional_americas': { name: 'Regional Manager - Americas', description: 'Access to 8 Americas offices', access: 'Regional', offices: regionalAccess.regional_americas },
+    'regional_oceania': { name: 'Regional Manager - Oceania', description: 'Access to Australia and New Zealand', access: 'Regional', offices: regionalAccess.regional_oceania }
 };
 
-// Destination Data
+// Destination Data with granular details
 const destinationData = {
-    'Maldives': { bookings: 2840, revenue: 5680000, avgValue: 2000, trend: 'up' },
-    'Thailand': { bookings: 2240, revenue: 3136000, avgValue: 1400, trend: 'up' },
-    'Dubai': { bookings: 1680, revenue: 2520000, avgValue: 1500, trend: 'stable' },
-    'Singapore': { bookings: 1240, revenue: 1860000, avgValue: 1500, trend: 'up' },
-    'Bali': { bookings: 1450, revenue: 2030000, avgValue: 1400, trend: 'up' },
-    'Japan': { bookings: 980, revenue: 1470000, avgValue: 1500, trend: 'up' },
-    'Europe': { bookings: 1240, revenue: 2480000, avgValue: 2000, trend: 'down' },
-    'Sri Lanka': { bookings: 680, revenue: 816000, avgValue: 1200, trend: 'stable' },
-    'Vietnam': { bookings: 620, revenue: 744000, avgValue: 1200, trend: 'up' },
-    'Mauritius': { bookings: 580, revenue: 870000, avgValue: 1500, trend: 'stable' },
-    'Seychelles': { bookings: 420, revenue: 756000, avgValue: 1800, trend: 'up' },
-    'Caribbean': { bookings: 890, revenue: 1780000, avgValue: 2000, trend: 'stable' },
-    'Australia': { bookings: 680, revenue: 1360000, avgValue: 2000, trend: 'up' },
-    'New Zealand': { bookings: 520, revenue: 1040000, avgValue: 2000, trend: 'up' },
-    'Fiji': { bookings: 420, revenue: 630000, avgValue: 1500, trend: 'stable' }
+    'Maldives': { bookings: 2840, pax: 6816, revenue: 5680000, avgCost: 2000, avgDuration: 6, trend: 'up', topHotel: 'One&Only', topAirline: 'Emirates', tourFit: { tour: 45, fit: 55 } },
+    'Thailand': { bookings: 2240, pax: 5376, revenue: 3136000, avgCost: 1400, avgDuration: 7, trend: 'up', topHotel: 'Marriott', topAirline: 'Thai Airways', tourFit: { tour: 60, fit: 40 } },
+    'Dubai': { bookings: 1680, pax: 4032, revenue: 2520000, avgCost: 1500, avgDuration: 5, trend: 'stable', topHotel: 'Jumeirah', topAirline: 'Emirates', tourFit: { tour: 35, fit: 65 } },
+    'Singapore': { bookings: 1240, pax: 2976, revenue: 1860000, avgCost: 1500, avgDuration: 4, trend: 'up', topHotel: 'Marina Bay Sands', topAirline: 'Singapore Airlines', tourFit: { tour: 40, fit: 60 } },
+    'Bali': { bookings: 1450, pax: 3480, revenue: 2030000, avgCost: 1400, avgDuration: 8, trend: 'up', topHotel: 'Ayana', topAirline: 'Garuda Indonesia', tourFit: { tour: 55, fit: 45 } },
+    'Japan': { bookings: 980, pax: 2352, revenue: 1470000, avgCost: 1500, avgDuration: 9, trend: 'up', topHotel: 'Hilton Tokyo', topAirline: 'JAL', tourFit: { tour: 70, fit: 30 } },
+    'Europe': { bookings: 1240, pax: 2976, revenue: 2480000, avgCost: 2000, avgDuration: 10, trend: 'down', topHotel: 'Marriott', topAirline: 'Lufthansa', tourFit: { tour: 75, fit: 25 } },
+    'Sri Lanka': { bookings: 680, pax: 1632, revenue: 816000, avgCost: 1200, avgDuration: 7, trend: 'stable', topHotel: 'Cinnamon', topAirline: 'SriLankan', tourFit: { tour: 50, fit: 50 } },
+    'Vietnam': { bookings: 620, pax: 1488, revenue: 744000, avgCost: 1200, avgDuration: 8, trend: 'up', topHotel: 'Sofitel', topAirline: 'Vietnam Airlines', tourFit: { tour: 65, fit: 35 } },
+    'Mauritius': { bookings: 580, pax: 1392, revenue: 870000, avgCost: 1500, avgDuration: 7, trend: 'stable', topHotel: 'Lux*', topAirline: 'Air Mauritius', tourFit: { tour: 40, fit: 60 } },
+    'Seychelles': { bookings: 420, pax: 1008, revenue: 756000, avgCost: 1800, avgDuration: 7, trend: 'up', topHotel: 'Four Seasons', topAirline: 'Emirates', tourFit: { tour: 30, fit: 70 } },
+    'Caribbean': { bookings: 890, pax: 2136, revenue: 1780000, avgCost: 2000, avgDuration: 8, trend: 'stable', topHotel: 'Sandals', topAirline: 'British Airways', tourFit: { tour: 45, fit: 55 } },
+    'Australia': { bookings: 680, pax: 1632, revenue: 1360000, avgCost: 2000, avgDuration: 12, trend: 'up', topHotel: 'Park Hyatt', topAirline: 'Qantas', tourFit: { tour: 55, fit: 45 } },
+    'New Zealand': { bookings: 520, pax: 1248, revenue: 1040000, avgCost: 2000, avgDuration: 14, trend: 'up', topHotel: 'Hilton', topAirline: 'Air New Zealand', tourFit: { tour: 60, fit: 40 } },
+    'Fiji': { bookings: 420, pax: 1008, revenue: 630000, avgCost: 1500, avgDuration: 7, trend: 'stable', topHotel: 'Tokoriki', topAirline: 'Fiji Airways', tourFit: { tour: 35, fit: 65 } }
 };
+
+// Hotel Chains Data
+const hotelChainsData = [
+    { name: 'Marriott International', roomNights: 12500, adr: 185, revenue: 2312500, occupancy: 78, destinations: ['Thailand', 'Europe', 'Dubai'], flow: { inbound: 60, outbound: 40 } },
+    { name: 'Hilton Worldwide', roomNights: 10800, adr: 195, revenue: 2106000, occupancy: 82, destinations: ['Japan', 'Australia', 'UK'], flow: { inbound: 45, outbound: 55 } },
+    { name: 'Hyatt Hotels', roomNights: 8900, adr: 220, revenue: 1958000, occupancy: 75, destinations: ['Maldives', 'Dubai', 'Singapore'], flow: { inbound: 70, outbound: 30 } },
+    { name: 'InterContinental', roomNights: 9200, adr: 175, revenue: 1610000, occupancy: 73, destinations: ['Bali', 'Vietnam', 'Europe'], flow: { inbound: 55, outbound: 45 } },
+    { name: 'Four Seasons', roomNights: 5600, adr: 450, revenue: 2520000, occupancy: 68, destinations: ['Seychelles', 'Maldives', 'Thailand'], flow: { inbound: 80, outbound: 20 } },
+    { name: 'One&Only Resorts', roomNights: 4200, adr: 520, revenue: 2184000, occupancy: 72, destinations: ['Maldives', 'Mauritius'], flow: { inbound: 85, outbound: 15 } },
+    { name: 'Jumeirah Group', roomNights: 6800, adr: 380, revenue: 2584000, occupancy: 76, destinations: ['Dubai', 'Maldives'], flow: { inbound: 40, outbound: 60 } },
+    { name: 'Local Boutique', roomNights: 15200, adr: 95, revenue: 1444000, occupancy: 65, destinations: ['Thailand', 'Vietnam', 'Sri Lanka'], flow: { inbound: 50, outbound: 50 } }
+];
+
+// Airlines Data
+const airlinesData = [
+    { name: 'Emirates', passengers: 18500, routes: ['Dubai', 'Maldives', 'Seychelles'], avgFare: 850, flow: { inbound: 45, outbound: 55 } },
+    { name: 'Singapore Airlines', passengers: 14200, routes: ['Singapore', 'Bali', 'Australia'], avgFare: 920, flow: { inbound: 60, outbound: 40 } },
+    { name: 'Qatar Airways', passengers: 12800, routes: ['Dubai', 'Maldives', 'Europe'], avgFare: 780, flow: { inbound: 40, outbound: 60 } },
+    { name: 'Thai Airways', passengers: 11500, routes: ['Thailand', 'Vietnam'], avgFare: 650, flow: { inbound: 70, outbound: 30 } },
+    { name: 'British Airways', passengers: 9800, routes: ['Europe', 'Caribbean', 'USA'], avgFare: 720, flow: { inbound: 30, outbound: 70 } },
+    { name: 'Lufthansa', passengers: 8900, routes: ['Europe', 'Dubai'], avgFare: 680, flow: { inbound: 35, outbound: 65 } },
+    { name: 'Qantas', passengers: 7600, routes: ['Australia', 'New Zealand'], avgFare: 1100, flow: { inbound: 55, outbound: 45 } },
+    { name: 'Air India', passengers: 11200, routes: ['India', 'Europe', 'USA'], avgFare: 580, flow: { inbound: 25, outbound: 75 } }
+];
+
+// Flight Routes Data
+const flightRoutesData = [
+    { route: 'LHR-DXB', direction: 'outbound', bookings: 1250, pax: 3000, airline: 'Emirates', avgFare: 680, topOffice: 'uk' },
+    { route: 'DXB-LHR', direction: 'inbound', bookings: 980, pax: 2352, airline: 'Emirates', avgFare: 720, topOffice: 'uae' },
+    { route: 'SIN-MLE', direction: 'outbound', bookings: 890, pax: 2136, airline: 'Singapore Airlines', avgFare: 520, topOffice: 'singapore' },
+    { route: 'BOM-BKK', direction: 'outbound', bookings: 1450, pax: 3480, airline: 'Thai Airways', avgFare: 380, topOffice: 'india' },
+    { route: 'JFK-LHR', direction: 'outbound', bookings: 680, pax: 1632, airline: 'British Airways', avgFare: 850, topOffice: 'usa' },
+    { route: 'SYD-DPS', direction: 'outbound', bookings: 720, pax: 1728, airline: 'Qantas', avgFare: 620, topOffice: 'australia' },
+    { route: 'DXB-MLE', direction: 'outbound', bookings: 920, pax: 2208, airline: 'Emirates', avgFare: 480, topOffice: 'uae' },
+    { route: 'CDG-BKK', direction: 'outbound', bookings: 580, pax: 1392, airline: 'Thai Airways', avgFare: 750, topOffice: 'france' }
+];
 
 // State Management
 let currentRole = 'board';
@@ -724,9 +864,12 @@ let selectedOffice = 'all';
 let selectedFlow = 'all';
 let selectedDestination = 'all';
 let selectedPeriod = 'month';
-let revenueChart, trendChart;
+let hotelFilter = 'all';
+let airlineFilter = 'all';
+let routeFilter = 'all';
+let trendChart, revenueChart, tourFitChart, durationChart;
 
-// Initialize Dashboard
+// Initialize
 document.addEventListener('DOMContentLoaded', function() {
     initOfficeSelector();
     initDestinationFilter();
@@ -734,15 +877,12 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDashboard();
     updateLastUpdated();
     updateRoleDisplay();
-    
     setInterval(updateLastUpdated, 60000);
 });
 
 function updateLastUpdated() {
     const now = new Date();
-    document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-US', { 
-        hour: '2-digit', minute: '2-digit' 
-    });
+    document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
 function updateRoleDisplay() {
@@ -750,43 +890,28 @@ function updateRoleDisplay() {
     document.getElementById('currentRoleDisplay').textContent = config.name;
     document.getElementById('roleAccessDescription').textContent = config.description;
     document.getElementById('accessLevelBadge').textContent = config.access;
-    
-    const badge = document.getElementById('accessLevelBadge');
-    if (config.access === 'Global') {
-        badge.className = 'px-3 py-1 bg-[#0066cc] text-white rounded-full text-xs font-bold';
-    } else if (config.access === 'Regional') {
-        badge.className = 'px-3 py-1 bg-[#2a9d8f] text-white rounded-full text-xs font-bold';
-    } else {
-        badge.className = 'px-3 py-1 bg-[#ffb703] text-white rounded-full text-xs font-bold';
-    }
 }
 
 function initOfficeSelector() {
     const selector = document.getElementById('officeSelector');
     selector.innerHTML = '<option value="all">All Offices (36 locations)</option>';
-    
     const config = roleConfig[currentRole];
     const offices = config.offices;
-    
-    // Group by region
     const regions = {};
     offices.forEach(key => {
         const office = officeData[key];
         if (!regions[office.region]) regions[office.region] = [];
         regions[office.region].push({ key, ...office });
     });
-    
     Object.keys(regions).sort().forEach(region => {
         const optgroup = document.createElement('optgroup');
         optgroup.label = region;
-        
         regions[region].forEach(office => {
             const option = document.createElement('option');
             option.value = office.key;
             option.textContent = `${office.name} (${office.city})`;
             optgroup.appendChild(option);
         });
-        
         selector.appendChild(optgroup);
     });
 }
@@ -804,120 +929,104 @@ function initDestinationFilter() {
 function changeRole(role) {
     currentRole = role;
     selectedOffice = 'all';
-    
     updateRoleDisplay();
     initOfficeSelector();
     updateDashboard();
-    
-    const config = roleConfig[role];
-    showToast(`Switched to ${config.name}`);
+    showToast(`Switched to ${roleConfig[role].name}`);
 }
 
 function selectOffice(office) {
     selectedOffice = office;
     updateDashboard();
-    
-    if (office !== 'all') {
-        const officeName = officeData[office].name;
-        showToast(`Viewing data for ${officeName}`);
-    }
+    if (office !== 'all') showToast(`Viewing data for ${officeData[office].name}`);
 }
 
 function setFlow(flow) {
     selectedFlow = flow;
-    
     document.querySelectorAll('.flow-btn').forEach(btn => {
         btn.classList.remove('bg-[#0066cc]', 'text-white', 'border-[#0066cc]');
         btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
     });
-    
     const activeBtn = document.getElementById(`flow-${flow}`);
     activeBtn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
     activeBtn.classList.add('bg-[#0066cc]', 'text-white', 'border-[#0066cc]');
-    
     updateDashboard();
+}
+
+function setHotelFilter(filter) {
+    hotelFilter = filter;
+    updateHotelChains();
+}
+
+function setAirlineFilter(filter) {
+    airlineFilter = filter;
+    updateAirlines();
+}
+
+function setRouteFilter(filter) {
+    routeFilter = filter;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`route-${filter}`).classList.add('active');
+    updateFlightRoutes();
 }
 
 function getAccessibleOffices() {
     const config = roleConfig[currentRole];
-    
-    if (selectedOffice === 'all') {
-        return config.offices;
-    } else {
-        if (config.offices.includes(selectedOffice)) {
-            return [selectedOffice];
-        } else {
-            return [config.offices[0]];
-        }
-    }
+    return selectedOffice === 'all' ? config.offices : 
+           config.offices.includes(selectedOffice) ? [selectedOffice] : [config.offices[0]];
 }
 
 function calculateMetrics() {
-    let totalBookings = 0;
-    let totalRevenue = 0;
-    let totalEnquiries = 0;
-    let totalProfit = 0;
-    let inboundBookings = 0;
-    let outboundBookings = 0;
+    let totalBookings = 0, totalPax = 0, totalRevenue = 0, totalEnquiries = 0, totalProfit = 0;
+    let tourBookings = 0, fitBookings = 0, totalDuration = 0, activeOffices = 0;
     
     const officesToInclude = getAccessibleOffices();
     
     officesToInclude.forEach(key => {
         const office = officeData[key];
         if (office.status !== 'active') return;
+        activeOffices++;
         
         let multiplier = 1;
+        if (selectedFlow === 'inbound') multiplier = 0.4;
+        else if (selectedFlow === 'outbound') multiplier = 0.6;
+        else if (selectedFlow === 'domestic') multiplier = 0.1;
         
-        // Apply flow filter
-        if (selectedFlow === 'inbound') {
-            multiplier = 0.4;
-            inboundBookings += office.baseMetrics.bookings * multiplier;
-        } else if (selectedFlow === 'outbound') {
-            multiplier = 0.6;
-            outboundBookings += office.baseMetrics.bookings * multiplier;
-        } else if (selectedFlow === 'domestic') {
-            multiplier = 0.1;
-        } else {
-            inboundBookings += office.baseMetrics.bookings * 0.4;
-            outboundBookings += office.baseMetrics.bookings * 0.6;
-        }
+        if (selectedDestination !== 'all') multiplier *= 0.3;
         
-        // Apply destination filter
-        if (selectedDestination !== 'all') {
-            multiplier *= 0.3;
-        }
-        
-        // Apply period multiplier
-        const periodMultipliers = {
-            'today': 1/30,
-            'week': 7/30,
-            'month': 1,
-            'quarter': 3,
-            'year': 12
-        };
+        const periodMultipliers = { 'today': 1/30, 'week': 7/30, 'month': 1, 'quarter': 3, 'year': 12 };
         multiplier *= periodMultipliers[selectedPeriod] || 1;
         
-        totalBookings += office.baseMetrics.bookings * multiplier;
+        const bookings = office.baseMetrics.bookings * multiplier;
+        const pax = office.baseMetrics.pax * multiplier;
+        
+        totalBookings += bookings;
+        totalPax += pax;
         totalRevenue += office.baseMetrics.revenue * multiplier;
         totalEnquiries += office.baseMetrics.enquiries * multiplier;
         totalProfit += (office.baseMetrics.revenue * (office.baseMetrics.margin / 100)) * multiplier;
+        totalDuration += office.baseMetrics.avgDuration * bookings;
+        
+        // Tour/FIT split (approximate)
+        tourBookings += bookings * 0.62;
+        fitBookings += bookings * 0.38;
     });
-    
-    const conversionRate = totalEnquiries > 0 ? (totalBookings / totalEnquiries) * 100 : 0;
-    const avgBookingValue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
-    const margin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
     
     return {
         bookings: Math.round(totalBookings),
+        pax: Math.round(totalPax),
         revenue: totalRevenue,
         enquiries: Math.round(totalEnquiries),
-        conversion: conversionRate,
-        margin: margin,
         profit: totalProfit,
-        avgValue: avgBookingValue,
-        inbound: Math.round(inboundBookings),
-        outbound: Math.round(outboundBookings),
-        offices: officesToInclude
+        avgDuration: totalBookings > 0 ? totalDuration / totalBookings : 0,
+        avgValue: totalBookings > 0 ? totalRevenue / totalBookings : 0,
+        revenuePerPax: totalPax > 0 ? totalRevenue / totalPax : 0,
+        conversion: totalEnquiries > 0 ? (totalBookings / totalEnquiries) * 100 : 0,
+        margin: totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0,
+        tourBookings: Math.round(tourBookings),
+        fitBookings: Math.round(fitBookings),
+        offices: officesToInclude,
+        activeOffices
     };
 }
 
@@ -927,96 +1036,114 @@ function updateDashboard() {
     
     const metrics = calculateMetrics();
     
-    // Update KPI Cards
+    // Update KPIs
     document.getElementById('kpiBookings').textContent = metrics.bookings.toLocaleString();
+    document.getElementById('kpiPax').textContent = metrics.pax.toLocaleString();
     document.getElementById('kpiRevenue').textContent = '$' + (metrics.revenue / 1000000).toFixed(2) + 'M';
+    document.getElementById('kpiDuration').innerHTML = metrics.avgDuration.toFixed(1) + ' <span class="text-sm">days</span>';
     document.getElementById('kpiConversion').textContent = metrics.conversion.toFixed(1) + '%';
     document.getElementById('kpiMargin').textContent = metrics.margin.toFixed(1) + '%';
     
-    document.getElementById('inboundBookings').textContent = metrics.inbound.toLocaleString();
-    document.getElementById('outboundBookings').textContent = metrics.outbound.toLocaleString();
+    document.getElementById('tourBookings').textContent = metrics.tourBookings.toLocaleString();
+    document.getElementById('fitBookings').textContent = metrics.fitBookings.toLocaleString();
+    document.getElementById('avgPaxPerBooking').textContent = metrics.bookings > 0 ? (metrics.pax / metrics.bookings).toFixed(1) : '0';
     document.getElementById('avgBookingValue').textContent = '$' + Math.round(metrics.avgValue).toLocaleString();
+    document.getElementById('revenuePerPax').textContent = '$' + Math.round(metrics.revenuePerPax).toLocaleString();
     document.getElementById('totalEnquiries').textContent = metrics.enquiries.toLocaleString();
     document.getElementById('grossProfit').textContent = '$' + (metrics.profit / 1000000).toFixed(2) + 'M';
     
-    // Update flow badge
-    const flowText = selectedFlow === 'all' ? 'All' : selectedFlow.charAt(0).toUpperCase() + selectedFlow.slice(1);
-    document.getElementById('bookingsFlow').textContent = flowText;
+    document.getElementById('bookingsFlow').textContent = selectedFlow === 'all' ? 'All' : selectedFlow.charAt(0).toUpperCase() + selectedFlow.slice(1);
+    document.getElementById('headerBookings').textContent = metrics.bookings.toLocaleString();
+    document.getElementById('headerRevenue').textContent = '$' + (metrics.revenue / 1000000).toFixed(1) + 'M';
+    document.getElementById('headerPax').textContent = metrics.pax.toLocaleString();
     
-    // Update header stats
-    document.getElementById('headerActiveBookings').textContent = metrics.bookings.toLocaleString();
-    document.getElementById('headerRevenue').textContent = '$' + (metrics.revenue / 1000).toFixed(0) + 'K';
+    // Update percentages
+    document.getElementById('tourPercentage').textContent = metrics.bookings > 0 ? Math.round((metrics.tourBookings / metrics.bookings) * 100) + '%' : '0%';
+    document.getElementById('fitPercentage').textContent = metrics.bookings > 0 ? Math.round((metrics.fitBookings / metrics.bookings) * 100) + '%' : '0%';
+    document.getElementById('tourCount').textContent = metrics.tourBookings.toLocaleString() + ' bookings';
+    document.getElementById('fitCount').textContent = metrics.fitBookings.toLocaleString() + ' bookings';
     
-    // Update all visualizations
     updateCharts();
     updateRegionalTable();
-    updateOfficeStatusOverview();
     updateDestinationsTable();
-    updateOfficeLeaderboard();
-    updateOfficeDirectory();
+    updateHotelChains();
+    updateAirlines();
+    updateFlightRoutes();
+    updateHotelPerformance();
     updateRecentBookings();
+    updateOfficeLeaderboard();
 }
 
 function initCharts() {
+    // Trend Chart
+    trendChart = new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [
+                { label: 'Bookings', data: [1200, 1350, 1480, 1620, 1750, 1890], borderColor: '#0066cc', backgroundColor: 'rgba(0,102,204,0.1)', fill: true, tension: 0.4, yAxisID: 'y' },
+                { label: 'Passengers', data: [2880, 3240, 3552, 3888, 4200, 4536], borderColor: '#2a9d8f', backgroundColor: 'rgba(42,157,143,0.1)', fill: true, tension: 0.4, yAxisID: 'y1' }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+                y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Bookings' } },
+                y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Passengers' }, grid: { drawOnChartArea: false } }
+            }
+        }
+    });
+    
+    // Tour vs FIT Chart
+    tourFitChart = new Chart(document.getElementById('tourFitChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Tour Packages', 'FIT'],
+            datasets: [{
+                data: [62, 38],
+                backgroundColor: ['#3730a3', '#be185d'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: { legend: { display: false } }
+        }
+    });
+    
     // Revenue Chart
-    const revCtx = document.getElementById('revenueChart').getContext('2d');
-    revenueChart = new Chart(revCtx, {
+    revenueChart = new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label: 'Revenue', data: [], backgroundColor: '#0066cc', borderRadius: 4 }] },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: value => '$' + (value / 1000) + 'K' } } }
+        }
+    });
+    
+    // Duration Chart
+    durationChart = new Chart(document.getElementById('durationChart'), {
         type: 'bar',
         data: {
-            labels: [],
+            labels: ['1-3 nights', '4-6 nights', '7-9 nights', '10-14 nights', '15+ nights'],
             datasets: [{
-                label: 'Revenue ($)',
-                data: [],
-                backgroundColor: '#0066cc',
+                label: 'Bookings',
+                data: [15, 35, 28, 18, 4],
+                backgroundColor: ['#00bcd4', '#0066cc', '#1e3a5f', '#6366f1', '#8b5cf6'],
                 borderRadius: 4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return '$' + (context.raw / 1000).toFixed(0) + 'K';
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: value => '$' + (value / 1000) + 'K'
-                    }
-                }
-            }
-        }
-    });
-    
-    // Trend Chart
-    const trendCtx = document.getElementById('trendChart').getContext('2d');
-    trendChart = new Chart(trendCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            datasets: [{
-                label: 'Bookings',
-                data: [650, 720, 810, 890, 950, 1020],
-                borderColor: '#0066cc',
-                backgroundColor: 'rgba(0,102,204,0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
             plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true }
-            }
+            scales: { y: { beginAtZero: true, ticks: { callback: value => value + '%' } } }
         }
     });
 }
@@ -1025,37 +1152,40 @@ function updateCharts() {
     const metrics = calculateMetrics();
     const offices = metrics.offices.filter(key => officeData[key].status === 'active');
     
+    // Update Trend Chart
+    const metric = document.getElementById('trendMetric').value;
+    const baseValue = metric === 'bookings' ? metrics.bookings / 6 : metric === 'pax' ? metrics.pax / 6 : metrics.revenue / 6;
+    const multiplier = selectedFlow === 'all' ? 1 : selectedFlow === 'inbound' ? 0.4 : 0.6;
+    
+    if (metric === 'bookings') {
+        trendChart.data.datasets[0].data = Array.from({length: 6}, (_, i) => Math.round(baseValue * multiplier * (0.85 + i * 0.05)));
+        trendChart.data.datasets[1].hidden = false;
+    } else if (metric === 'pax') {
+        trendChart.data.datasets[0].hidden = true;
+        trendChart.data.datasets[1].data = Array.from({length: 6}, (_, i) => Math.round(baseValue * multiplier * (0.85 + i * 0.05)));
+        trendChart.data.datasets[1].hidden = false;
+    } else {
+        trendChart.data.datasets[0].data = Array.from({length: 6}, (_, i) => Math.round(baseValue * multiplier * (0.85 + i * 0.05)));
+        trendChart.data.datasets[1].hidden = true;
+    }
+    trendChart.update();
+    
     // Update Revenue Chart
-    const labels = offices.map(key => officeData[key].name);
-    const data = offices.map(key => {
-        const office = officeData[key];
+    revenueChart.data.labels = offices.map(key => officeData[key].name.split(' ')[0]);
+    revenueChart.data.datasets[0].data = offices.map(key => {
         let multiplier = 1;
         if (selectedFlow === 'inbound') multiplier = 0.4;
         else if (selectedFlow === 'outbound') multiplier = 0.6;
-        else if (selectedFlow === 'domestic') multiplier = 0.1;
-        
         if (selectedDestination !== 'all') multiplier *= 0.3;
-        
         const periodMultipliers = { 'today': 1/30, 'week': 7/30, 'month': 1, 'quarter': 3, 'year': 12 };
         multiplier *= periodMultipliers[selectedPeriod] || 1;
-        
-        return office.baseMetrics.revenue * multiplier;
+        return officeData[key].baseMetrics.revenue * multiplier;
     });
-    
-    revenueChart.data.labels = labels;
-    revenueChart.data.datasets[0].data = data;
     revenueChart.update();
     
-    // Update Trend Chart based on selected metric
-    const metric = document.getElementById('trendMetric').value;
-    const baseValue = metric === 'bookings' ? 800 : metric === 'revenue' ? 1280000 : 5000;
-    const multiplier = selectedFlow === 'all' ? 1 : selectedFlow === 'inbound' ? 0.4 : selectedFlow === 'outbound' ? 0.6 : 0.1;
-    
-    trendChart.data.datasets[0].label = metric.charAt(0).toUpperCase() + metric.slice(1);
-    trendChart.data.datasets[0].data = Array.from({length: 6}, (_, i) => 
-        Math.round(baseValue * multiplier * (0.8 + i * 0.06))
-    );
-    trendChart.update();
+    // Update Tour/FIT Chart
+    tourFitChart.data.datasets[0].data = [metrics.tourBookings, metrics.fitBookings];
+    tourFitChart.update();
 }
 
 function updateRegionalTable() {
@@ -1063,97 +1193,52 @@ function updateRegionalTable() {
     const metrics = calculateMetrics();
     const accessibleOffices = metrics.offices;
     
-    // Calculate by region
     const regionData = {};
     accessibleOffices.forEach(key => {
         const office = officeData[key];
         if (office.status !== 'active') return;
         
         if (!regionData[office.region]) {
-            regionData[office.region] = { offices: 0, bookings: 0, revenue: 0, topOffice: null, topRevenue: 0 };
+            regionData[office.region] = { offices: 0, bookings: 0, pax: 0, revenue: 0, duration: 0, tour: 0, fit: 0 };
         }
         
         let multiplier = 1;
         if (selectedFlow === 'inbound') multiplier = 0.4;
         else if (selectedFlow === 'outbound') multiplier = 0.6;
-        else if (selectedFlow === 'domestic') multiplier = 0.1;
-        
         if (selectedDestination !== 'all') multiplier *= 0.3;
-        
         const periodMultipliers = { 'today': 1/30, 'week': 7/30, 'month': 1, 'quarter': 3, 'year': 12 };
         multiplier *= periodMultipliers[selectedPeriod] || 1;
         
-        const officeRevenue = office.baseMetrics.revenue * multiplier;
+        const bookings = office.baseMetrics.bookings * multiplier;
         
         regionData[office.region].offices++;
-        regionData[office.region].bookings += office.baseMetrics.bookings * multiplier;
-        regionData[office.region].revenue += officeRevenue;
-        
-        if (officeRevenue > regionData[office.region].topRevenue) {
-            regionData[office.region].topRevenue = officeRevenue;
-            regionData[office.region].topOffice = office.name;
-        }
+        regionData[office.region].bookings += bookings;
+        regionData[office.region].pax += office.baseMetrics.pax * multiplier;
+        regionData[office.region].revenue += office.baseMetrics.revenue * multiplier;
+        regionData[office.region].duration += office.baseMetrics.avgDuration * bookings;
+        regionData[office.region].tour += bookings * 0.62;
+        regionData[office.region].fit += bookings * 0.38;
     });
     
     tbody.innerHTML = Object.entries(regionData).map(([region, data]) => {
+        const avgDuration = data.bookings > 0 ? data.duration / data.bookings : 0;
         const avgValue = data.bookings > 0 ? data.revenue / data.bookings : 0;
+        const tourPct = data.bookings > 0 ? Math.round((data.tour / data.bookings) * 100) : 0;
+        const fitPct = data.bookings > 0 ? Math.round((data.fit / data.bookings) * 100) : 0;
+        
         return `
             <tr class="border-b border-slate-100 hover:bg-slate-50">
                 <td class="py-3 px-4 font-semibold text-[#1e3a5f]">${region}</td>
                 <td class="py-3 px-4 text-center mono">${data.offices}</td>
                 <td class="py-3 px-4 text-right mono">${Math.round(data.bookings).toLocaleString()}</td>
+                <td class="py-3 px-4 text-right mono">${Math.round(data.pax).toLocaleString()}</td>
                 <td class="py-3 px-4 text-right mono font-semibold">$${(data.revenue / 1000).toFixed(0)}K</td>
+                <td class="py-3 px-4 text-center mono">${avgDuration.toFixed(1)}d</td>
+                <td class="py-3 px-4 text-center"><span class="text-xs font-semibold text-indigo-600">${tourPct}%</span> / <span class="text-xs font-semibold text-pink-600">${fitPct}%</span></td>
                 <td class="py-3 px-4 text-right mono">$${Math.round(avgValue)}</td>
-                <td class="py-3 px-4 text-center text-xs font-semibold text-[#0066cc]">${data.topOffice || 'N/A'}</td>
             </tr>
         `;
     }).join('');
-}
-
-function updateOfficeStatusOverview() {
-    const container = document.getElementById('officeStatusOverview');
-    const metrics = calculateMetrics();
-    const accessibleOffices = metrics.offices;
-    
-    const stats = { tier1: 0, tier2: 0, tier3: 0, tier4: 0, active: 0, nonOp: 0, totalStaff: 0 };
-    
-    accessibleOffices.forEach(key => {
-        const office = officeData[key];
-        stats['tier' + office.tier]++;
-        stats[office.status === 'active' ? 'active' : 'nonOp']++;
-        stats.totalStaff += office.staff;
-    });
-    
-    container.innerHTML = `
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-            <div class="flex items-center gap-2">
-                <span class="tier-badge tier-1">Tier 1</span>
-                <span class="text-sm text-slate-600">Strategic</span>
-            </div>
-            <span class="font-bold text-[#1e3a5f]">${stats.tier1}</span>
-        </div>
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-            <div class="flex items-center gap-2">
-                <span class="tier-badge tier-2">Tier 2</span>
-                <span class="text-sm text-slate-600">Growth</span>
-            </div>
-            <span class="font-bold text-[#1e3a5f]">${stats.tier2}</span>
-        </div>
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-            <div class="flex items-center gap-2">
-                <span class="tier-badge tier-3">Tier 3</span>
-                <span class="text-sm text-slate-600">Emerging</span>
-            </div>
-            <span class="font-bold text-[#1e3a5f]">${stats.tier3}</span>
-        </div>
-        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-            <div class="flex items-center gap-2">
-                <span class="tier-badge tier-4">Tier 4</span>
-                <span class="text-sm text-slate-600">Opportunity</span>
-            </div>
-            <span class="font-bold text-[#1e3a5f]">${stats.tier4}</span>
-        </div>
-    `;
 }
 
 function updateDestinationsTable() {
@@ -1161,34 +1246,229 @@ function updateDestinationsTable() {
     const metrics = calculateMetrics();
     
     let destinations = Object.entries(destinationData);
-    
     if (selectedDestination !== 'all') {
         destinations = destinations.filter(([name]) => name === selectedDestination);
     }
     
-    // Apply flow filter to destination data
+    // Apply flow filter
     destinations = destinations.map(([name, data]) => {
         let multiplier = 1;
         if (selectedFlow === 'inbound') multiplier = 0.6;
         else if (selectedFlow === 'outbound') multiplier = 0.4;
-        else if (selectedFlow === 'domestic') multiplier = 0.1;
-        return [name, { ...data, bookings: data.bookings * multiplier, revenue: data.revenue * multiplier }];
+        return [name, { ...data, bookings: data.bookings * multiplier, pax: data.pax * multiplier, revenue: data.revenue * multiplier }];
     });
     
     destinations.sort((a, b) => b[1].revenue - a[1].revenue);
-    destinations = destinations.slice(0, 6);
+    destinations = destinations.slice(0, 8);
     
     tbody.innerHTML = destinations.map(([name, data]) => {
-        const trendIcon = data.trend === 'up' ? '<i class="fas fa-arrow-up text-green-500"></i>' : 
-                         data.trend === 'down' ? '<i class="fas fa-arrow-down text-red-500"></i>' : 
-                         '<i class="fas fa-minus text-yellow-500"></i>';
+        const trendIcon = data.trend === 'up' ? '<i class="fas fa-arrow-up text-green-500"></i>' : data.trend === 'down' ? '<i class="fas fa-arrow-down text-red-500"></i>' : '<i class="fas fa-minus text-yellow-500"></i>';
+        const tourPct = data.tourFit.tour;
+        const fitPct = data.tourFit.fit;
         
         return `
             <tr class="border-b border-slate-100 hover:bg-slate-50">
                 <td class="py-3 px-4 font-semibold text-[#1e3a5f]">${name}</td>
                 <td class="py-3 px-4 text-right mono">${Math.round(data.bookings).toLocaleString()}</td>
-                <td class="py-3 px-4 text-right mono font-semibold">$${(data.revenue / 1000).toFixed(0)}K</td>
+                <td class="py-3 px-4 text-right mono">${Math.round(data.pax).toLocaleString()}</td>
+                <td class="py-3 px-4 text-center mono">${data.avgDuration} nights</td>
+                <td class="py-3 px-4 text-right mono font-semibold">$${data.avgCost}</td>
+                <td class="py-3 px-4 text-center"><span class="text-xs font-semibold text-indigo-600">${tourPct}%</span> / <span class="text-xs font-semibold text-pink-600">${fitPct}%</span></td>
                 <td class="py-3 px-4 text-center">${trendIcon}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateHotelChains() {
+    const container = document.getElementById('hotelChainsList');
+    let hotels = hotelChainsData;
+    
+    if (hotelFilter !== 'all') {
+        const flowKey = hotelFilter === 'inbound' ? 'inbound' : 'outbound';
+        hotels = hotels.filter(h => h.flow[flowKey] > 50);
+    }
+    
+    if (selectedDestination !== 'all') {
+        hotels = hotels.filter(h => h.destinations.includes(selectedDestination));
+    }
+    
+    hotels.sort((a, b) => b.revenue - a.revenue);
+    
+    container.innerHTML = hotels.slice(0, 5).map((hotel, index) => {
+        const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-other';
+        const percent = Math.round((hotel.occupancy / 100) * 100);
+        
+        return `
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                <div class="hotel-rank">
+                    <div class="rank-number ${rankClass}">${index + 1}</div>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-[#1e3a5f]">${hotel.name}</span>
+                        <span class="text-xs font-bold mono">$${(hotel.revenue / 1000).toFixed(0)}K</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-500 mb-1">
+                        <span>${hotel.roomNights.toLocaleString()} room nights</span>
+                        <span>ADR: $${hotel.adr}</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-1.5">
+                        <div class="bg-[#0066cc] h-1.5 rounded-full" style="width: ${percent}%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateAirlines() {
+    const container = document.getElementById('airlinesList');
+    let airlines = airlinesData;
+    
+    if (airlineFilter !== 'all') {
+        const flowKey = airlineFilter === 'inbound' ? 'inbound' : 'outbound';
+        airlines = airlines.filter(a => a.flow[flowKey] > 50);
+    }
+    
+    airlines.sort((a, b) => b.passengers - a.passengers);
+    
+    container.innerHTML = airlines.slice(0, 5).map((airline, index) => {
+        const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-other';
+        
+        return `
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                <div class="hotel-rank">
+                    <div class="rank-number ${rankClass}">${index + 1}</div>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-[#1e3a5f]">${airline.name}</span>
+                        <span class="text-xs font-bold mono">$${(airline.passengers * airline.avgFare / 1000).toFixed(0)}K</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-500">
+                        <span>${airline.passengers.toLocaleString()} pax</span>
+                        <span>Avg: $${airline.avgFare}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateFlightRoutes() {
+    const tbody = document.getElementById('flightRoutesTable');
+    const metrics = calculateMetrics();
+    const accessibleOffices = metrics.offices;
+    
+    let routes = flightRoutesData.filter(r => accessibleOffices.includes(r.topOffice));
+    
+    if (routeFilter !== 'all') {
+        routes = routes.filter(r => r.direction === routeFilter);
+    }
+    
+    if (selectedDestination !== 'all') {
+        // Filter routes related to destination
+        routes = routes.filter(r => {
+            const destCities = { 'Maldives': 'MLE', 'Thailand': 'BKK', 'Dubai': 'DXB', 'Singapore': 'SIN', 'Bali': 'DPS' };
+            return r.route.includes(destCities[selectedDestination]) || r.route.includes('LHR');
+        });
+    }
+    
+    routes.sort((a, b) => b.bookings - a.bookings);
+    
+    tbody.innerHTML = routes.map(route => {
+        const flowBadge = route.direction === 'inbound' ? 'flow-inbound' : 'flow-outbound';
+        const flowText = route.direction === 'inbound' ? 'Inbound' : 'Outbound';
+        
+        return `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="py-3 px-4 font-semibold text-[#1e3a5f] mono">${route.route}</td>
+                <td class="py-3 px-4 text-center"><span class="flow-badge ${flowBadge}">${flowText}</span></td>
+                <td class="py-3 px-4 text-right mono">${route.bookings.toLocaleString()}</td>
+                <td class="py-3 px-4 text-right mono">${route.pax.toLocaleString()}</td>
+                <td class="py-3 px-4 text-center text-sm">${route.airline}</td>
+                <td class="py-3 px-4 text-right mono">$${route.avgFare}</td>
+                <td class="py-3 px-4 text-center"><img src="https://flagcdn.com/w20/${getCountryCode(officeData[route.topOffice].country)}.png" class="w-5 h-auto mx-auto"></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateHotelPerformance() {
+    const tbody = document.getElementById('hotelPerformanceTable');
+    const filter = document.getElementById('hotelDestFilter').value;
+    
+    let hotels = hotelChainsData.flatMap(chain => 
+        chain.destinations.map(dest => ({
+            name: chain.name,
+            destination: dest,
+            roomNights: Math.round(chain.roomNights / chain.destinations.length),
+            adr: chain.adr,
+            revenue: Math.round(chain.revenue / chain.destinations.length),
+            occupancy: chain.occupancy,
+            source: ['India', 'UK', 'Australia'][Math.floor(Math.random() * 3)]
+        }))
+    );
+    
+    if (filter !== 'all') {
+        hotels = hotels.filter(h => h.destination === filter);
+    }
+    
+    hotels.sort((a, b) => b.revenue - a.revenue);
+    
+    tbody.innerHTML = hotels.slice(0, 6).map(hotel => `
+        <tr class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="py-3 px-4 font-semibold text-sm text-[#1e3a5f]">${hotel.name}</td>
+            <td class="py-3 px-4 text-center text-xs">${hotel.destination}</td>
+            <td class="py-3 px-4 text-right mono">${hotel.roomNights.toLocaleString()}</td>
+            <td class="py-3 px-4 text-right mono">$${hotel.adr}</td>
+            <td class="py-3 px-4 text-right mono font-semibold">$${(hotel.revenue / 1000).toFixed(0)}K</td>
+            <td class="py-3 px-4 text-center">
+                <div class="flex items-center justify-center gap-2">
+                    <div class="w-16 bg-slate-200 rounded-full h-1.5">
+                        <div class="bg-green-500 h-1.5 rounded-full" style="width: ${hotel.occupancy}%"></div>
+                    </div>
+                    <span class="text-xs mono">${hotel.occupancy}%</span>
+                </div>
+            </td>
+            <td class="py-3 px-4 text-center text-xs font-semibold text-[#0066cc]">${hotel.source}</td>
+        </tr>
+    `).join('');
+}
+
+function updateRecentBookings() {
+    const tbody = document.getElementById('recentBookingsTable');
+    const metrics = calculateMetrics();
+    const accessibleOffices = metrics.offices;
+    
+    const sampleBookings = [
+        { id: 'ORN-284756', customer: 'Rajesh Kumar', pax: 4, duration: 7, destination: 'Maldives', hotel: 'One&Only Reethi Rah', airline: 'Emirates', type: 'fit', value: 18500, office: 'india' },
+        { id: 'ORN-284755', customer: 'Sarah Johnson', pax: 2, duration: 5, destination: 'Thailand', hotel: 'Marriott Phuket', airline: 'Thai Airways', type: 'tour', value: 4200, office: 'uk' },
+        { id: 'ORN-284754', customer: 'Ahmed Hassan', pax: 6, duration: 4, destination: 'Dubai', hotel: 'Jumeirah Beach', airline: 'Emirates', type: 'fit', value: 12800, office: 'uae' },
+        { id: 'ORN-284753', customer: 'Li Wei', pax: 2, duration: 3, destination: 'Singapore', hotel: 'Marina Bay Sands', airline: 'Singapore Airlines', type: 'tour', value: 3800, office: 'singapore' },
+        { id: 'ORN-284752', customer: 'Emma Wilson', pax: 2, duration: 14, destination: 'Australia', hotel: 'Park Hyatt Sydney', airline: 'Qantas', type: 'tour', value: 15600, office: 'australia' },
+        { id: 'ORN-284751', customer: 'Michael Chen', pax: 8, duration: 6, destination: 'Bali', hotel: 'Ayana Resort', airline: 'Garuda Indonesia', type: 'fit', value: 22400, office: 'singapore' }
+    ];
+    
+    let bookings = sampleBookings.filter(b => accessibleOffices.includes(b.office));
+    if (selectedDestination !== 'all') bookings = bookings.filter(b => b.destination === selectedDestination);
+    
+    tbody.innerHTML = bookings.map(booking => {
+        const typeBadge = booking.type === 'tour' ? 'type-tour' : 'type-fit';
+        const typeText = booking.type === 'tour' ? 'TOUR' : 'FIT';
+        
+        return `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="py-3 px-4 font-mono text-xs text-[#0066cc]">${booking.id}</td>
+                <td class="py-3 px-4 font-semibold text-sm">${booking.customer}</td>
+                <td class="py-3 px-4 text-center mono">${booking.pax}</td>
+                <td class="py-3 px-4 text-center mono">${booking.duration} nights</td>
+                <td class="py-3 px-4 text-sm">${booking.destination}</td>
+                <td class="py-3 px-4 text-sm text-slate-600">${booking.hotel}</td>
+                <td class="py-3 px-4 text-center text-xs">${booking.airline}</td>
+                <td class="py-3 px-4 text-center"><span class="type-badge ${typeBadge}">${typeText}</span></td>
+                <td class="py-3 px-4 text-right font-bold mono">$${booking.value.toLocaleString()}</td>
             </tr>
         `;
     }).join('');
@@ -1204,153 +1484,26 @@ function updateOfficeLeaderboard() {
         let multiplier = 1;
         if (selectedFlow === 'inbound') multiplier = 0.4;
         else if (selectedFlow === 'outbound') multiplier = 0.6;
-        else if (selectedFlow === 'domestic') multiplier = 0.1;
-        
         if (selectedDestination !== 'all') multiplier *= 0.3;
-        
-        const periodMultipliers = { 'today': 1/30, 'week': 7/30, 'month': 1, 'quarter': 3, 'year': 12 };
-        multiplier *= periodMultipliers[selectedPeriod] || 1;
-        
-        return {
-            key,
-            name: office.name,
-            revenue: office.baseMetrics.revenue * multiplier,
-            bookings: office.baseMetrics.bookings * multiplier
-        };
+        return { key, name: office.name, pax: office.baseMetrics.pax * multiplier };
     });
     
-    offices.sort((a, b) => b.revenue - a.revenue);
+    offices.sort((a, b) => b.pax - a.pax);
     
     container.innerHTML = offices.slice(0, 5).map((office, index) => {
         const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-        const percent = offices[0].revenue > 0 ? Math.round((office.revenue / offices[0].revenue) * 100) : 0;
-        
         return `
-            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer" onclick="selectOffice('${office.key}')">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
                 <span class="text-lg">${medal}</span>
                 <div class="flex-1">
-                    <div class="flex justify-between items-center mb-1">
+                    <div class="flex justify-between items-center">
                         <span class="font-semibold text-sm text-[#1e3a5f]">${office.name}</span>
-                        <span class="text-xs font-bold mono">$${(office.revenue / 1000).toFixed(0)}K</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2">
-                        <div class="bg-[#0066cc] h-2 rounded-full" style="width: ${percent}%"></div>
+                        <span class="text-xs font-bold mono">${Math.round(office.pax).toLocaleString()} pax</span>
                     </div>
                 </div>
             </div>
         `;
     }).join('');
-}
-
-function updateOfficeDirectory() {
-    const tbody = document.getElementById('officeDirectoryTable');
-    const metrics = calculateMetrics();
-    const accessibleOffices = metrics.offices;
-    
-    const offices = accessibleOffices.map(key => ({
-        key,
-        ...officeData[key]
-    }));
-    
-    offices.sort((a, b) => b.baseMetrics.revenue - a.baseMetrics.revenue);
-    
-    tbody.innerHTML = offices.map(office => {
-        const tierClass = `tier-${office.tier}`;
-        const tierName = office.tier === '1' ? 'Tier 1' : office.tier === '2' ? 'Tier 2' : office.tier === '3' ? 'Tier 3' : 'Tier 4';
-        const statusClass = office.status === 'active' ? 'status-active' : 'status-non-op';
-        const statusText = office.status === 'active' ? 'Active' : 'Non-Operational';
-        
-        return `
-            <tr class="border-b border-slate-100 hover:bg-slate-50">
-                <td class="py-3 px-4">
-                    <div class="flex items-center gap-2">
-                        <img src="https://flagcdn.com/w20/${getCountryCode(office.country)}.png" class="w-5 h-auto">
-                        <div>
-                            <div class="font-semibold text-sm text-[#1e3a5f]">${office.name}</div>
-                            <div class="text-xs text-slate-500">${office.city}</div>
-                        </div>
-                    </div>
-                </td>
-                <td class="py-3 px-4 text-center"><span class="tier-badge ${tierClass}">${tierName}</span></td>
-                <td class="py-3 px-4 text-center"><span class="text-xs font-semibold ${statusClass}">${statusText}</span></td>
-                <td class="py-3 px-4 text-right mono">${office.staff}</td>
-                <td class="py-3 px-4 text-right mono">${office.baseMetrics.bookings.toLocaleString()}</td>
-                <td class="py-3 px-4 text-right mono font-semibold">$${(office.baseMetrics.revenue / 1000).toFixed(0)}K</td>
-                <td class="py-3 px-4 text-center text-xs">${office.manager}</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function updateRecentBookings() {
-    const tbody = document.getElementById('recentBookingsTable');
-    const metrics = calculateMetrics();
-    const accessibleOffices = metrics.offices;
-    
-    const sampleBookings = [
-        { id: 'ORN-284756', customer: 'Rajesh Kumar', destination: 'Maldives', office: 'india', type: 'outbound', value: 4200, status: 'confirmed' },
-        { id: 'ORN-284755', customer: 'Sarah Johnson', destination: 'Thailand', office: 'uk', type: 'outbound', value: 2800, status: 'pending' },
-        { id: 'ORN-284754', customer: 'Ahmed Hassan', destination: 'Dubai', office: 'uae', type: 'inbound', value: 1500, status: 'confirmed' },
-        { id: 'ORN-284753', customer: 'Li Wei', destination: 'Singapore', office: 'singapore', type: 'inbound', value: 3200, status: 'confirmed' },
-        { id: 'ORN-284752', customer: 'Emma Wilson', destination: 'Japan', office: 'australia', type: 'outbound', value: 5600, status: 'processing' },
-        { id: 'ORN-284751', customer: 'Michael Chen', destination: 'Bali', office: 'singapore', type: 'outbound', value: 3400, status: 'confirmed' },
-        { id: 'ORN-284750', customer: 'Priya Sharma', destination: 'Europe', office: 'india', type: 'outbound', value: 4800, status: 'confirmed' },
-        { id: 'ORN-284749', customer: 'James Miller', destination: 'Caribbean', office: 'usa', type: 'outbound', value: 6200, status: 'pending' }
-    ];
-    
-    let bookings = sampleBookings.filter(b => accessibleOffices.includes(b.office));
-    
-    if (selectedDestination !== 'all') {
-        bookings = bookings.filter(b => b.destination === selectedDestination);
-    }
-    
-    if (selectedFlow !== 'all') {
-        bookings = bookings.filter(b => b.type === selectedFlow);
-    }
-    
-    bookings = bookings.slice(0, 6);
-    
-    tbody.innerHTML = bookings.map(booking => {
-        const office = officeData[booking.office];
-        const statusColors = {
-            'confirmed': 'bg-green-100 text-green-700',
-            'pending': 'bg-yellow-100 text-yellow-700',
-            'processing': 'bg-blue-100 text-blue-700'
-        };
-        
-        return `
-            <tr class="border-b border-slate-100 hover:bg-slate-50">
-                <td class="py-3 px-4 font-mono text-xs text-[#0066cc]">${booking.id}</td>
-                <td class="py-3 px-4 font-semibold text-sm">${booking.customer}</td>
-                <td class="py-3 px-4 text-sm">${booking.destination}</td>
-                <td class="py-3 px-4 text-center">
-                    <img src="https://flagcdn.com/w20/${getCountryCode(office.country)}.png" class="w-5 h-auto mx-auto" title="${office.name}">
-                </td>
-                <td class="py-3 px-4 text-center">
-                    <span class="flow-badge flow-${booking.type}">${booking.type}</span>
-                </td>
-                <td class="py-3 px-4 text-right font-bold mono">$${booking.value.toLocaleString()}</td>
-                <td class="py-3 px-4 text-center">
-                    <span class="px-2 py-1 rounded text-xs font-bold ${statusColors[booking.status]}">${booking.status}</span>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function getCountryCode(country) {
-    const codes = {
-        'UK': 'gb', 'Germany': 'de', 'France': 'fr', 'Italy': 'it', 'Czech Republic': 'cz',
-        'Poland': 'pl', 'Slovakia': 'sk', 'Greece': 'gr', 'Bulgaria': 'bg', 'Turkey': 'tr',
-        'Spain': 'es', 'Switzerland': 'ch', 'Ireland': 'ie', 'Austria': 'at', 'Croatia': 'hr',
-        'UAE': 'ae', 'Bahrain': 'bh', 'Qatar': 'qa', 'Oman': 'om',
-        'India': 'in', 'Singapore': 'sg', 'Malaysia': 'my', 'Thailand': 'th', 'Indonesia': 'id',
-        'Philippines': 'ph', 'Hong Kong': 'hk',
-        'USA': 'us', 'Peru': 'pe', 'Argentina': 'ar', 'Mexico': 'mx', 'Brazil': 'br',
-        'Colombia': 'co', 'Ecuador': 'ec', 'Chile': 'cl',
-        'Australia': 'au', 'New Zealand': 'nz'
-    };
-    return codes[country] || 'un';
 }
 
 function toggleChartType(chart, type) {
@@ -1360,26 +1513,14 @@ function toggleChartType(chart, type) {
     }
 }
 
-function viewAllRegions() {
-    showToast('Opening detailed regional report...');
+function getCountryCode(country) {
+    const codes = { 'UK': 'gb', 'Germany': 'de', 'France': 'fr', 'Italy': 'it', 'Czech Republic': 'cz', 'Poland': 'pl', 'Slovakia': 'sk', 'Greece': 'gr', 'Bulgaria': 'bg', 'Turkey': 'tr', 'Spain': 'es', 'Switzerland': 'ch', 'Ireland': 'ie', 'Austria': 'at', 'Croatia': 'hr', 'UAE': 'ae', 'Bahrain': 'bh', 'Qatar': 'qa', 'Oman': 'om', 'India': 'in', 'Singapore': 'sg', 'Malaysia': 'my', 'Thailand': 'th', 'Indonesia': 'id', 'Philippines': 'ph', 'Hong Kong': 'hk', 'USA': 'us', 'Peru': 'pe', 'Argentina': 'ar', 'Mexico': 'mx', 'Brazil': 'br', 'Colombia': 'co', 'Ecuador': 'ec', 'Chile': 'cl', 'Australia': 'au', 'New Zealand': 'nz' };
+    return codes[country] || 'un';
 }
 
-function viewAllDestinations() {
-    showToast('Opening full destination report...');
-}
-
-function filterOfficeList(filter) {
-    showToast(`Filtering offices: ${filter}`);
-    // Implementation would filter the office directory table
-}
-
-function exportReport() {
-    showToast('Exporting dashboard report...');
-    setTimeout(() => {
-        showToast('Report downloaded successfully!');
-    }, 1500);
-}
-
+function viewAllDestinations() { showToast('Opening full destination report...'); }
+function exportRegionalData() { showToast('Exporting regional data...'); }
+function exportReport() { showToast('Exporting dashboard report...'); setTimeout(() => showToast('Report downloaded successfully!'), 1500); }
 function showToast(message) {
     const toast = document.getElementById('toast');
     document.getElementById('toastMessage').textContent = message;
