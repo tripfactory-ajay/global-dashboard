@@ -29,6 +29,7 @@
             border: 1px solid #e2e8f0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            position: relative;
         }
         .tf-card:hover {
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -188,6 +189,114 @@
         .tab-btn:hover:not(.active) {
             color: #64748b;
         }
+        
+        /* Clean Professional Help Icon */
+        .help-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            background: #f1f5f9;
+            color: #64748b;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 10px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        .help-icon:hover {
+            background: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+        
+        /* Clean Square Popup Modal */
+        .help-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .help-modal-overlay.active {
+            display: flex;
+        }
+        
+        .help-modal {
+            background: white;
+            width: 320px;
+            max-width: 90vw;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            animation: modalSlide 0.25s ease;
+        }
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .help-modal-header {
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .help-modal-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin: 0;
+        }
+        .help-modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .help-modal-close:hover {
+            background: #e2e8f0;
+            color: #64748b;
+        }
+        
+        .help-modal-body {
+            padding: 16px;
+            font-size: 0.8125rem;
+            line-height: 1.6;
+            color: #475569;
+        }
+        
+        .help-modal-footer {
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        
+        /* Positioning for headers with help icons */
+        .card-header-with-help {
+            position: relative;
+            padding-right: 28px;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-white">
@@ -212,7 +321,7 @@
 </div>
 
 <!-- Header -->
-<header class="bg-white border-b border-slate-200 shadow-sm">
+<header class="bg-white border-b border-slate-200 shadow-sm relative">
     <div class="max-w-[1920px] mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-6">
@@ -229,7 +338,7 @@
             </div>
             
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 bg-slate-100 rounded-lg p-1 border border-slate-200">
+                <div class="flex items-center gap-2 bg-slate-100 rounded-lg p-1 border border-slate-200 relative pr-8">
                     <span class="text-xs font-semibold text-slate-600 px-2">View As:</span>
                     <select id="roleSelector" onchange="changeRole(this.value)" class="bg-white border border-slate-300 rounded px-3 py-1.5 text-sm font-medium text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
                         <option value="board">Board / Global</option>
@@ -240,6 +349,9 @@
                         <option value="regional_americas">Regional Manager - Americas</option>
                         <option value="regional_oceania">Regional Manager - Oceania</option>
                     </select>
+                    <div class="help-icon" style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%);" onclick="openHelp('role')" title="What is this?">
+                        <i class="fas fa-question"></i>
+                    </div>
                 </div>
                 
                 <div class="flex items-center gap-2 px-3 py-1.5 bg-[#0066cc]/10 border border-[#0066cc] rounded-full">
@@ -260,14 +372,17 @@
 <div class="filter-bar px-6 py-4 bg-white">
     <div class="max-w-[1920px] mx-auto">
         <div class="flex flex-wrap items-center gap-4">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 relative">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Office:</span>
                 <select id="officeSelector" onchange="selectOffice(this.value)" class="min-w-[280px] bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
                     <option value="all">All Offices (36 locations)</option>
                 </select>
+                <div class="help-icon" style="position: relative; top: auto; right: auto;" onclick="openHelp('officeFilter')" title="What is this?">
+                    <i class="fas fa-question"></i>
+                </div>
             </div>
             
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 relative">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Period:</span>
                 <select id="dateRange" onchange="updateDashboard()" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
                     <option value="today">Today</option>
@@ -276,25 +391,34 @@
                     <option value="quarter">This Quarter</option>
                     <option value="year">Year to Date</option>
                 </select>
+                <div class="help-icon" style="position: relative; top: auto; right: auto;" onclick="openHelp('period')" title="What is this?">
+                    <i class="fas fa-question"></i>
+                </div>
             </div>
             
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 relative">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Flow:</span>
                 <div class="flex gap-1">
                     <button onclick="setFlow('all')" id="flow-all" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0066cc] text-white border-2 border-[#0066cc]">All</button>
                     <button onclick="setFlow('inbound')" id="flow-inbound" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Inbound</button>
                     <button onclick="setFlow('outbound')" id="flow-outbound" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Outbound</button>
                 </div>
+                <div class="help-icon" style="position: relative; top: auto; right: auto;" onclick="openHelp('flow')" title="What is this?">
+                    <i class="fas fa-question"></i>
+                </div>
             </div>
             
-            <div class="flex items-center gap-2 flex-1">
+            <div class="flex items-center gap-2 flex-1 relative">
                 <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Destination:</span>
                 <select id="destinationFilter" onchange="updateDashboard()" class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] max-w-xs">
                     <option value="all">All Destinations</option>
                 </select>
+                <div class="help-icon" style="position: relative; top: auto; right: auto;" onclick="openHelp('destination')" title="What is this?">
+                    <i class="fas fa-question"></i>
+                </div>
             </div>
             
-            <div class="flex items-center gap-6 ml-auto bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
+            <div class="flex items-center gap-6 ml-auto bg-slate-50 px-4 py-2 rounded-lg border border-slate-200 relative pr-10">
                 <div class="text-right">
                     <div class="text-xs text-slate-500 font-medium">Bookings</div>
                     <div class="text-lg font-bold text-[#1e3a5f] mono" id="headerBookings">0</div>
@@ -309,6 +433,9 @@
                     <div class="text-xs text-slate-500 font-medium">Pax</div>
                     <div class="text-lg font-bold text-[#0066cc] mono" id="headerPax">0</div>
                 </div>
+                <div class="help-icon" style="position: absolute; right: 8px; top: 8px;" onclick="openHelp('headerStats')" title="What is this?">
+                    <i class="fas fa-question"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -318,7 +445,7 @@
 <main class="p-6 max-w-[1920px] mx-auto space-y-6 bg-white">
 
     <!-- Role Info Banner -->
-    <div id="roleInfoBanner" class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+    <div id="roleInfoBanner" class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between relative">
         <div class="flex items-center gap-3">
             <i class="fas fa-user-shield text-[#0066cc] text-xl"></i>
             <div>
@@ -330,11 +457,17 @@
             <span class="text-xs text-slate-500">Access:</span>
             <span class="px-3 py-1 bg-[#0066cc] text-white rounded-full text-xs font-bold" id="accessLevelBadge">Global</span>
         </div>
+        <div class="help-icon" onclick="openHelp('roleBanner')" title="What is this?">
+            <i class="fas fa-question"></i>
+        </div>
     </div>
 
     <!-- Primary KPIs -->
     <section class="stats-grid">
-        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm relative">
+            <div class="help-icon" onclick="openHelp('kpiBookings')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Total Bookings</div>
                 <span class="flow-badge flow-inbound"><span id="bookingsFlow">All</span></span>
@@ -350,7 +483,10 @@
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-green);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm relative" style="border-left-color: var(--orn-green);">
+            <div class="help-icon" onclick="openHelp('kpiPassengers')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Total Passengers</div>
                 <i class="fas fa-users text-[#2a9d8f]"></i>
@@ -365,7 +501,10 @@
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-cyan);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm relative" style="border-left-color: var(--orn-cyan);">
+            <div class="help-icon" onclick="openHelp('kpiRevenue')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Revenue</div>
                 <i class="fas fa-dollar-sign text-[#00bcd4]"></i>
@@ -381,7 +520,10 @@
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-yellow);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm relative" style="border-left-color: var(--orn-yellow);">
+            <div class="help-icon" onclick="openHelp('kpiDuration')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Avg Duration</div>
                 <i class="fas fa-clock text-[#ffb703]"></i>
@@ -396,7 +538,10 @@
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-lime);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm relative" style="border-left-color: var(--orn-lime);">
+            <div class="help-icon" onclick="openHelp('kpiConversion')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Conversion</div>
                 <i class="fas fa-percentage text-[#cddc39]"></i>
@@ -411,7 +556,10 @@
             </div>
         </div>
 
-        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-red);">
+        <div class="metric-card rounded-xl p-4 border border-slate-200 shadow-sm relative" style="border-left-color: var(--orn-red);">
+            <div class="help-icon" onclick="openHelp('kpiMargin')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-start mb-2">
                 <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Gross Margin</div>
                 <i class="fas fa-chart-line text-[#e63946]"></i>
@@ -430,13 +578,16 @@
     <!-- Booking Trends & Tour vs FIT -->
     <div class="grid grid-cols-3 gap-6">
         <!-- Booking Trends -->
-        <div class="tf-card rounded-xl p-6 col-span-2">
+        <div class="tf-card rounded-xl p-6 col-span-2 relative">
+            <div class="help-icon" onclick="openHelp('trendsChart')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-center mb-2">
-                <div>
+                <div class="card-header-with-help">
                     <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Booking & Passenger Trends</h3>
                     <p class="table-description">Monthly booking volume and passenger numbers with growth trajectory</p>
                 </div>
-                <select id="trendMetric" onchange="updateDashboard()" class="text-xs border border-slate-300 rounded px-2 py-1">
+                <select id="trendMetric" onchange="updateDashboard()" class="text-xs border border-slate-300 rounded px-2 py-1 relative">
                     <option value="bookings">Bookings</option>
                     <option value="pax">Passengers</option>
                     <option value="revenue">Revenue</option>
@@ -448,7 +599,10 @@
         </div>
 
         <!-- Tour vs FIT Breakdown -->
-        <div class="tf-card rounded-xl p-6">
+        <div class="tf-card rounded-xl p-6 relative">
+            <div class="help-icon" onclick="openHelp('tourFitChart')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="mb-2">
                 <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Tour vs FIT Split</h3>
                 <p class="table-description">Package tours vs independent travel bookings by volume and revenue</p>
@@ -483,9 +637,12 @@
 
     <!-- Revenue by Office & Duration Distribution -->
     <div class="grid grid-cols-2 gap-6">
-        <div class="tf-card rounded-xl p-6">
+        <div class="tf-card rounded-xl p-6 relative">
+            <div class="help-icon" onclick="openHelp('revenueChart')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-center mb-2">
-                <div>
+                <div class="card-header-with-help">
                     <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Revenue by Office</h3>
                     <p class="table-description">Total revenue contribution by office location for selected period</p>
                 </div>
@@ -499,7 +656,10 @@
             </div>
         </div>
 
-        <div class="tf-card rounded-xl p-6">
+        <div class="tf-card rounded-xl p-6 relative">
+            <div class="help-icon" onclick="openHelp('durationChart')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="mb-2">
                 <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Trip Duration Distribution</h3>
                 <p class="table-description">Breakdown of bookings by length of stay in nights</p>
@@ -513,9 +673,12 @@
     <!-- Top Hotels & Flights -->
     <div class="grid grid-cols-2 gap-6">
         <!-- Top Hotel Chains -->
-        <div class="tf-card rounded-xl p-6">
+        <div class="tf-card rounded-xl p-6 relative">
+            <div class="help-icon" onclick="openHelp('hotelsList')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-center mb-4">
-                <div>
+                <div class="card-header-with-help">
                     <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Hotel Chains</h3>
                     <p class="table-description">Most booked hotel chains by room nights and revenue contribution</p>
                 </div>
@@ -531,9 +694,12 @@
         </div>
 
         <!-- Top Airlines -->
-        <div class="tf-card rounded-xl p-6">
+        <div class="tf-card rounded-xl p-6 relative">
+            <div class="help-icon" onclick="openHelp('airlinesList')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-center mb-4">
-                <div>
+                <div class="card-header-with-help">
                     <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Airlines</h3>
                     <p class="table-description">Most used airlines by passenger numbers and routes</p>
                 </div>
@@ -550,9 +716,12 @@
     </div>
 
     <!-- Regional Performance with Granular Data -->
-    <div class="tf-card rounded-xl p-6">
+    <div class="tf-card rounded-xl p-6 relative">
+        <div class="help-icon" onclick="openHelp('regionalTable')" title="What is this?">
+            <i class="fas fa-question"></i>
+        </div>
         <div class="flex justify-between items-center mb-2">
-            <div>
+            <div class="card-header-with-help">
                 <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Regional Performance Detail</h3>
                 <p class="table-description">Comprehensive metrics by region including passengers, duration, and booking types</p>
             </div>
@@ -583,9 +752,12 @@
 
     <!-- Destination Performance with Cost Analysis -->
     <div class="grid grid-cols-3 gap-6">
-        <div class="tf-card rounded-xl p-6 col-span-2">
+        <div class="tf-card rounded-xl p-6 col-span-2 relative">
+            <div class="help-icon" onclick="openHelp('destinationsTable')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="flex justify-between items-center mb-2">
-                <div>
+                <div class="card-header-with-help">
                     <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Destination Cost Analysis</h3>
                     <p class="table-description">Average cost per holiday, duration, and passenger count by destination</p>
                 </div>
@@ -612,7 +784,10 @@
         </div>
 
         <!-- Office Leaderboard -->
-        <div class="tf-card rounded-xl p-6">
+        <div class="tf-card rounded-xl p-6 relative">
+            <div class="help-icon" onclick="openHelp('leaderboard')" title="What is this?">
+                <i class="fas fa-question"></i>
+            </div>
             <div class="mb-2">
                 <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Offices by Passengers</h3>
                 <p class="table-description">Offices ranked by total passenger volume</p>
@@ -624,9 +799,12 @@
     </div>
 
     <!-- Flight Route Analysis -->
-    <div class="tf-card rounded-xl p-6">
+    <div class="tf-card rounded-xl p-6 relative">
+        <div class="help-icon" onclick="openHelp('routesTable')" title="What is this?">
+            <i class="fas fa-question"></i>
+        </div>
         <div class="flex justify-between items-center mb-4">
-            <div>
+            <div class="card-header-with-help">
                 <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Flight Routes</h3>
                 <p class="table-description">Most popular flight segments by booking volume and passenger flow</p>
             </div>
@@ -657,9 +835,12 @@
     </div>
 
     <!-- Hotel Performance by Destination -->
-    <div class="tf-card rounded-xl p-6">
+    <div class="tf-card rounded-xl p-6 relative">
+        <div class="help-icon" onclick="openHelp('hotelPerfTable')" title="What is this?">
+            <i class="fas fa-question"></i>
+        </div>
         <div class="flex justify-between items-center mb-4">
-            <div>
+            <div class="card-header-with-help">
                 <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Hotel Performance by Destination</h3>
                 <p class="table-description">Top performing hotels and chains in key destinations with occupancy and ADR</p>
             </div>
@@ -693,9 +874,12 @@
     </div>
 
     <!-- Recent Bookings Detail -->
-    <div class="tf-card rounded-xl p-6">
+    <div class="tf-card rounded-xl p-6 relative">
+        <div class="help-icon" onclick="openHelp('recentTable')" title="What is this?">
+            <i class="fas fa-question"></i>
+        </div>
         <div class="flex justify-between items-center mb-2">
-            <div>
+            <div class="card-header-with-help">
                 <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Recent Bookings Detail</h3>
                 <p class="table-description">Latest bookings with passenger count, duration, hotel, and flight details</p>
             </div>
@@ -733,6 +917,24 @@
     </div>
 </main>
 
+<!-- Clean Square Help Modal -->
+<div id="helpModalOverlay" class="help-modal-overlay" onclick="closeHelp(event)">
+    <div class="help-modal" onclick="event.stopPropagation()">
+        <div class="help-modal-header">
+            <h3 class="help-modal-title" id="helpModalTitle">Feature Name</h3>
+            <button class="help-modal-close" onclick="closeHelp()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="help-modal-body" id="helpModalBody">
+            <!-- Content populated by JS -->
+        </div>
+        <div class="help-modal-footer">
+            Click outside or press ESC to close
+        </div>
+    </div>
+</div>
+
 <!-- Toast Notification -->
 <div id="toast" class="fixed bottom-4 right-4 bg-white border-2 border-[#0066cc] px-6 py-4 rounded-lg shadow-xl transform translate-x-full transition-transform duration-300 z-50">
     <div class="flex items-center gap-3">
@@ -742,6 +944,134 @@
 </div>
 
 <script>
+// Clean, concise help content - explains FUNCTION not data
+const helpContent = {
+    role: {
+        title: "Role Selector",
+        text: "Switch between different user roles to see how the dashboard adapts. Board members see all 36 offices, while regional managers only see their assigned territories. Demonstrates our role-based access control system."
+    },
+    officeFilter: {
+        title: "Office Filter",
+        text: "Filter data by specific office locations. Use this to drill down into individual branch performance or compare offices within a region. The dropdown is organized by geographic regions for easy navigation."
+    },
+    period: {
+        title: "Time Period Selector",
+        text: "Change the reporting timeframe from daily to yearly views. All charts and KPIs update instantly to reflect the selected period, enabling both operational daily monitoring and strategic long-term analysis."
+    },
+    flow: {
+        title: "Travel Flow Filter",
+        text: "Toggle between Inbound (foreigners visiting your markets), Outbound (your customers traveling abroad), or All flows. This helps analyze market dynamics and identify growth opportunities in specific segments."
+    },
+    destination: {
+        title: "Destination Filter",
+        text: "Focus analysis on specific holiday destinations. Use this to evaluate destination popularity, profitability, and performance trends across your network of offices."
+    },
+    headerStats: {
+        title: "Quick Stats Bar",
+        text: "Real-time summary of key metrics across all filtered data. These numbers update instantly as you change filters, providing immediate visibility into booking volume, revenue, and passenger counts."
+    },
+    roleBanner: {
+        title: "Current Role Indicator",
+        text: "Displays your active role and data access level. The access badge shows whether you're viewing Global, Regional, or Office-specific data. Helps ensure users understand their current view context."
+    },
+    kpiBookings: {
+        title: "Total Bookings KPI",
+        text: "Tracks reservation volume with Tour/FIT breakdown. Tour = pre-packaged group trips. FIT = customized independent travel. Use this card to monitor sales velocity and product mix."
+    },
+    kpiPassengers: {
+        title: "Passenger Count KPI",
+        text: "Total traveler volume across all bookings. The average per booking metric helps identify group travel trends. Higher averages typically indicate family or corporate group bookings."
+    },
+    kpiRevenue: {
+        title: "Revenue KPI",
+        text: "Gross booking value before costs. Shows average booking value and per-passenger revenue. Use this to track sales performance and identify upsell opportunities."
+    },
+    kpiDuration: {
+        title: "Duration KPI",
+        text: "Average length of stay across all trips. Longer durations typically correlate with higher-value bookings and different destination preferences. Monitor trends to adjust inventory and pricing."
+    },
+    kpiConversion: {
+        title: "Conversion Rate KPI",
+        text: "Percentage of enquiries that convert to confirmed bookings. Industry benchmark is 12-15%. Use this to measure sales team effectiveness and identify process improvements."
+    },
+    kpiMargin: {
+        title: "Gross Margin KPI",
+        text: "Profitability percentage after direct costs. Target is 18%+. This metric helps evaluate pricing strategy and supplier negotiation effectiveness across your network."
+    },
+    trendsChart: {
+        title: "Trends Chart",
+        text: "Time-series visualization showing performance over time. Toggle between Bookings, Passengers, or Revenue views using the dropdown. Identifies seasonal patterns and growth trajectories."
+    },
+    tourFitChart: {
+        title: "Tour vs FIT Chart",
+        text: "Visual breakdown of package tours versus independent travel. Tour bookings offer volume and predictability, while FIT delivers higher margins. Use this to balance your product strategy."
+    },
+    revenueChart: {
+        title: "Revenue by Office Chart",
+        text: "Compare revenue contribution across office locations. Toggle between Bar view (for comparison) and Pie view (for share analysis). Identifies top performers and growth opportunities."
+    },
+    durationChart: {
+        title: "Duration Distribution Chart",
+        text: "Shows booking volume by trip length. Helps identify popular stay durations and optimize hotel contract terms. Longer stays typically generate higher total revenue per booking."
+    },
+    hotelsList: {
+        title: "Hotel Chains Ranking",
+        text: "Performance ranking of partner hotel chains by room nights and revenue. Filter by Inbound/Outbound flow to see different partnership strengths. Use for supplier negotiations and contract reviews."
+    },
+    airlinesList: {
+        title: "Airlines Ranking",
+        text: "Top carriers by passenger volume and revenue contribution. Identifies key airline partners and route performance. Filter by flow direction to analyze different market segments."
+    },
+    regionalTable: {
+        title: "Regional Performance Table",
+        text: "Comprehensive comparison of all geographic regions. Shows office count, booking volume, revenue, and product mix. Use the Export button to download data for further analysis."
+    },
+    destinationsTable: {
+        title: "Destination Analysis Table",
+        text: "Detailed metrics for each destination including cost, duration, and booking trends. Trend arrows indicate growth direction. Use this for destination marketing and inventory planning."
+    },
+    leaderboard: {
+        title: "Office Leaderboard",
+        text: "Ranking of offices by passenger volume. Gamification element to drive performance. Medal icons highlight top performers. Use for recognition programs and best practice sharing."
+    },
+    routesTable: {
+        title: "Flight Routes Table",
+        text: "Most popular flight segments with direction, volume, and pricing data. Identifies key routes for airline negotiations and capacity planning. Filter by direction to analyze flow patterns."
+    },
+    hotelPerfTable: {
+        title: "Hotel Performance Table",
+        text: "Property-level metrics including occupancy rates and average daily rates (ADR). Filter by destination to evaluate specific market performance. Use for revenue management and partnership decisions."
+    },
+    recentTable: {
+        title: "Recent Bookings Feed",
+        text: "Real-time transaction log showing latest customer bookings. Provides visibility into actual booking patterns, customer preferences, and product combinations. Updates automatically throughout the day."
+    }
+};
+
+// Help Modal Functions
+function openHelp(key) {
+    const content = helpContent[key];
+    if (!content) return;
+    
+    document.getElementById('helpModalTitle').textContent = content.title;
+    document.getElementById('helpModalBody').textContent = content.text;
+    document.getElementById('helpModalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeHelp(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('helpModalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeHelp();
+    }
+});
+
 // Complete ORN Office Data
 const officeData = {
     uk: { name: 'United Kingdom', city: 'London', country: 'UK', region: 'Europe', tier: '2', status: 'active', staff: 4, manager: 'Ajay Kawa', baseMetrics: { bookings: 420, pax: 1008, revenue: 680000, enquiries: 2800, conversion: 15.0, margin: 18.2, avgDuration: 6.5 } },
@@ -878,6 +1208,11 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLastUpdated();
     updateRoleDisplay();
     setInterval(updateLastUpdated, 60000);
+    
+    // Show welcome message
+    setTimeout(() => {
+        showToast('Click ? icons to learn about each feature');
+    }, 2000);
 });
 
 function updateLastUpdated() {
