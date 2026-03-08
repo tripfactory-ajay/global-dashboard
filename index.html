@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORN Global Business Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        :root {
+            --orn-navy: #1e3a5f;
+            --orn-blue: #0066cc;
+            --orn-cyan: #00bcd4;
+            --orn-lime: #cddc39;
+            --orn-yellow: #ffb703;
+            --orn-red: #e63946;
+            --orn-green: #2a9d8f;
+        }
+        
+        body { 
+            background-color: #ffffff; 
+            color: var(--orn-navy); 
+        }
+        
+        .tf-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .tf-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-left: 4px solid var(--orn-blue);
+        }
+        
+        .demo-banner {
+            background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+            border-bottom: 2px solid #f59e0b;
+        }
+        
+        .role-badge {
+            background: linear-gradient(135deg, var(--orn-blue), var(--orn-navy));
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .office-select {
+            min-width: 280px;
+        }
+        
+        .flow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .flow-inbound { background: #dcfce7; color: #166534; }
+        .flow-outbound { background: #dbeafe; color: #1e40af; }
+        .flow-domestic { background: #fef3c7; color: #92400e; }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .kpi-trend-up { color: var(--orn-green); }
+        .kpi-trend-down { color: var(--orn-red); }
+        
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--orn-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .filter-bar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .brand-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #1e3a5f 0%, #0066cc 20%, #00bcd4 40%, #cddc39 60%, #ffb703 80%, #e63946 100%);
+        }
+        
+        .table-description {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-style: italic;
+            margin-top: 0.25rem;
+        }
+        
+        .orn-gradient-text {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0066cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tier-badge {
+            font-size: 0.65rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+        .tier-1 { background: #fee2e2; color: #991b1b; }
+        .tier-2 { background: #dbeafe; color: #1e40af; }
+        .tier-3 { background: #dcfce7; color: #166534; }
+        .tier-4 { background: #f3f4f6; color: #374151; }
+        
+        .status-active { color: #16a34a; }
+        .status-non-op { color: #9ca3af; }
+    </style>
+</head>
+<body class="min-h-screen bg-white">
+
+<!-- Brand Color Bar -->
+<div class="brand-bar"></div>
+
+<!-- Demo Data Banner -->
+<div class="demo-banner px-6 py-2">
+    <div class="max-w-[1920px] mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-info-circle text-amber-600"></i>
+            <span class="text-sm font-medium text-amber-800">
+                <strong>Demo Data:</strong> All statistics and metrics shown are for demonstration purposes only. Data is simulated and does not represent actual business performance.
+            </span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-amber-700">
+            <span class="pulse-dot"></span>
+            <span>Last updated: <span id="lastUpdated" class="mono">Just now</span></span>
+        </div>
+    </div>
+</div>
+
+<!-- Header -->
+<header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-[1920px] mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <!-- ORN Logo -->
+                <div class="flex items-center gap-3">
+                    <img src="orn-logo.png" alt="ORN" class="h-12 w-auto">
+                    <div class="h-10 w-px bg-slate-300"></div>
+                    <img src="tripfactory-logo.png" alt="TripFactory" class="h-8 w-auto">
+                </div>
+                <div class="h-10 w-px bg-slate-300 mx-2"></div>
+                <div>
+                    <h1 class="text-2xl font-bold orn-gradient-text">Global Business Intelligence</h1>
+                    <p class="text-xs text-slate-500 font-medium tracking-wider uppercase">Real-Time Performance Dashboard</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Role Selector -->
+                <div class="flex items-center gap-2 bg-slate-100 rounded-lg p-1 border border-slate-200">
+                    <span class="text-xs font-semibold text-slate-600 px-2">View As:</span>
+                    <select id="roleSelector" onchange="changeRole(this.value)" class="bg-white border border-slate-300 rounded px-3 py-1.5 text-sm font-medium text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
+                        <option value="board">Board / Global</option>
+                        <option value="regional_europe">Regional Manager - Europe</option>
+                        <option value="regional_middle_east">Regional Manager - Middle East</option>
+                        <option value="regional_asia_pacific">Regional Manager - Asia Pacific</option>
+                        <option value="regional_south_asia">Regional Manager - South Asia</option>
+                        <option value="regional_americas">Regional Manager - Americas</option>
+                        <option value="regional_oceania">Regional Manager - Oceania</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-[#0066cc]/10 border border-[#0066cc] rounded-full">
+                    <div class="pulse-dot"></div>
+                    <span class="text-xs font-bold text-[#0066cc] mono">LIVE DATA</span>
+                </div>
+                
+                <button onclick="exportReport()" class="px-4 py-2 bg-[#0066cc] text-white rounded-lg text-sm font-bold hover:bg-[#1e3a5f] transition-all flex items-center gap-2 shadow-md">
+                    <i class="fas fa-download"></i>
+                    Export Report
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Filter Bar -->
+<div class="filter-bar px-6 py-4 bg-white">
+    <div class="max-w-[1920px] mx-auto">
+        <div class="flex flex-wrap items-center gap-4">
+            <!-- Office Selector -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Office:</span>
+                <select id="officeSelector" onchange="selectOffice(this.value)" class="office-select bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
+                    <option value="all">All Offices (36 locations)</option>
+                </select>
+            </div>
+            
+            <!-- Date Range -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Period:</span>
+                <select id="dateRange" onchange="updateDashboard()" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month" selected>This Month</option>
+                    <option value="quarter">This Quarter</option>
+                    <option value="year">Year to Date</option>
+                </select>
+            </div>
+            
+            <!-- Flow Direction -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Flow:</span>
+                <div class="flex gap-1">
+                    <button onclick="setFlow('all')" id="flow-all" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0066cc] text-white border-2 border-[#0066cc]">All</button>
+                    <button onclick="setFlow('inbound')" id="flow-inbound" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Inbound</button>
+                    <button onclick="setFlow('outbound')" id="flow-outbound" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Outbound</button>
+                    <button onclick="setFlow('domestic')" id="flow-domestic" class="flow-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-600 border-2 border-slate-200 hover:border-[#0066cc]">Domestic</button>
+                </div>
+            </div>
+            
+            <!-- Destination Filter -->
+            <div class="flex items-center gap-2 flex-1">
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Destination:</span>
+                <select id="destinationFilter" onchange="updateDashboard()" class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] max-w-xs">
+                    <option value="all">All Destinations</option>
+                </select>
+            </div>
+            
+            <!-- Quick Stats Summary -->
+            <div class="flex items-center gap-6 ml-auto bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
+                <div class="text-right">
+                    <div class="text-xs text-slate-500 font-medium">Active Bookings</div>
+                    <div class="text-lg font-bold text-[#1e3a5f] mono" id="headerActiveBookings">8,420</div>
+                </div>
+                <div class="h-8 w-px bg-slate-300"></div>
+                <div class="text-right">
+                    <div class="text-xs text-slate-500 font-medium">Today's Revenue</div>
+                    <div class="text-lg font-bold text-[#2a9d8f] mono" id="headerRevenue">$1.24M</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main class="p-6 max-w-[1920px] mx-auto space-y-6 bg-white">
+
+    <!-- Role Info Banner -->
+    <div id="roleInfoBanner" class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-user-shield text-[#0066cc] text-xl"></i>
+            <div>
+                <span class="text-sm font-bold text-[#1e3a5f]" id="currentRoleDisplay">Board / Global View</span>
+                <p class="text-xs text-slate-600" id="roleAccessDescription">Full access to all 36 offices worldwide</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500">Access Level:</span>
+            <span class="px-3 py-1 bg-[#0066cc] text-white rounded-full text-xs font-bold" id="accessLevelBadge">Global</span>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <section class="stats-grid">
+        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Total Bookings</div>
+                <span class="flow-badge flow-inbound"><i class="fas fa-arrow-down"></i> <span id="bookingsFlow">All</span></span>
+            </div>
+            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiBookings">8,420</div>
+            <div class="flex items-center gap-2 text-sm">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1">
+                    <i class="fas fa-arrow-up"></i> 15.3%
+                </span>
+                <span class="text-slate-400">vs last period</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-200">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Inbound: <strong class="text-[#1e3a5f]" id="inboundBookings">3,368</strong></span>
+                    <span class="text-slate-500">Outbound: <strong class="text-[#1e3a5f]" id="outboundBookings">5,052</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-green);">
+            <div class="flex justify-between items-start mb-2">
+                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Revenue</div>
+                <i class="fas fa-dollar-sign text-[#2a9d8f]"></i>
+            </div>
+            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiRevenue">$12.8M</div>
+            <div class="flex items-center gap-2 text-sm">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1">
+                    <i class="fas fa-arrow-up"></i> 11.7%
+                </span>
+                <span class="text-slate-400">vs last period</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-200">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Avg Value: <strong class="text-[#1e3a5f]" id="avgBookingValue">$1,520</strong></span>
+                    <span class="text-slate-500">Target: <strong class="text-[#1e3a5f]">$15M</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-yellow);">
+            <div class="flex justify-between items-start mb-2">
+                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Conversion Rate</div>
+                <i class="fas fa-percentage text-[#ffb703]"></i>
+            </div>
+            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiConversion">16.8%</div>
+            <div class="flex items-center gap-2 text-sm">
+                <span class="kpi-trend-up font-semibold flex items-center gap-1">
+                    <i class="fas fa-arrow-up"></i> 1.2%
+                </span>
+                <span class="text-slate-400">vs last period</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-200">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Enquiries: <strong class="text-[#1e3a5f]" id="totalEnquiries">50,119</strong></span>
+                    <span class="text-slate-500">Target: <strong class="text-[#1e3a5f]">18%</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card rounded-xl p-5 border border-slate-200 shadow-sm" style="border-left-color: var(--orn-red);">
+            <div class="flex justify-between items-start mb-2">
+                <div class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Gross Margin</div>
+                <i class="fas fa-chart-line text-[#e63946]"></i>
+            </div>
+            <div class="text-3xl font-bold text-[#1e3a5f] mono mb-1" id="kpiMargin">17.5%</div>
+            <div class="flex items-center gap-2 text-sm">
+                <span class="kpi-trend-down font-semibold flex items-center gap-1">
+                    <i class="fas fa-arrow-down"></i> 0.3%
+                </span>
+                <span class="text-slate-400">vs last period</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-200">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Profit: <strong class="text-[#1e3a5f]" id="grossProfit">$2.24M</strong></span>
+                    <span class="text-slate-500">Target: <strong class="text-[#1e3a5f]">20%</strong></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Revenue by Office -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="flex justify-between items-center mb-2">
+                <div>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Revenue by Office</h3>
+                    <p class="table-description">Total revenue generated by each office for the selected period and filters</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="toggleChartType('revenue', 'bar')" class="text-xs px-2 py-1 bg-[#0066cc] text-white rounded">Bar</button>
+                    <button onclick="toggleChartType('revenue', 'doughnut')" class="text-xs px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Pie</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Bookings Trend -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="flex justify-between items-center mb-2">
+                <div>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Booking Trends</h3>
+                    <p class="table-description">Monthly booking volume filtered by selected office, flow and destination</p>
+                </div>
+                <select id="trendMetric" onchange="updateDashboard()" class="text-xs border border-slate-300 rounded px-2 py-1">
+                    <option value="bookings">Bookings</option>
+                    <option value="revenue">Revenue</option>
+                    <option value="enquiries">Enquiries</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Regional Performance & Office Status -->
+    <div class="grid grid-cols-3 gap-6">
+        <!-- Regional Breakdown -->
+        <div class="tf-card rounded-xl p-6 col-span-2">
+            <div class="flex justify-between items-center mb-2">
+                <div>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Regional Performance</h3>
+                    <p class="table-description">Comparative metrics across all regions based on current filter selections</p>
+                </div>
+                <button onclick="viewAllRegions()" class="text-xs text-[#0066cc] font-semibold hover:underline">View Details</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm data-table">
+                    <thead>
+                        <tr class="border-b border-slate-200">
+                            <th class="text-left py-3 px-4">Region</th>
+                            <th class="text-center py-3 px-4">Offices</th>
+                            <th class="text-right py-3 px-4">Bookings</th>
+                            <th class="text-right py-3 px-4">Revenue</th>
+                            <th class="text-right py-3 px-4">Avg Value</th>
+                            <th class="text-center py-3 px-4">Top Office</th>
+                        </tr>
+                    </thead>
+                    <tbody id="regionalTable">
+                        <!-- Generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Office Status Overview -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="mb-2">
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Office Status</h3>
+                <p class="table-description">Distribution of offices by operational tier and status</p>
+            </div>
+            <div class="space-y-4" id="officeStatusOverview">
+                <!-- Generated by JS -->
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-200">
+                <div class="flex justify-between items-center text-xs mb-2">
+                    <span class="text-slate-500">Total Offices</span>
+                    <span class="font-bold text-[#1e3a5f]">36</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-500">Active Staff</span>
+                    <span class="font-bold text-[#2a9d8f]">913</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Destinations & Office Leaderboard -->
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Top Destinations -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="flex justify-between items-center mb-2">
+                <div>
+                    <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Performing Destinations</h3>
+                    <p class="table-description">Destinations ranked by revenue, filtered by selected office and flow direction</p>
+                </div>
+                <button onclick="viewAllDestinations()" class="text-xs text-[#0066cc] font-semibold hover:underline">View All</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm data-table">
+                    <thead>
+                        <tr class="border-b border-slate-200">
+                            <th class="text-left py-3 px-4">Destination</th>
+                            <th class="text-right py-3 px-4">Bookings</th>
+                            <th class="text-right py-3 px-4">Revenue</th>
+                            <th class="text-center py-3 px-4">Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="destinationsTable">
+                        <!-- Generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Office Leaderboard -->
+        <div class="tf-card rounded-xl p-6">
+            <div class="mb-2">
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Top Performing Offices</h3>
+                <p class="table-description">Offices ranked by total revenue contribution within selected filters</p>
+            </div>
+            <div class="space-y-3" id="officeLeaderboard">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Office List -->
+    <div class="tf-card rounded-xl p-6">
+        <div class="flex justify-between items-center mb-2">
+            <div>
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Office Directory</h3>
+                <p class="table-description">Complete list of all offices with current performance metrics and operational status</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="filterOfficeList('all')" class="text-xs px-3 py-1.5 bg-[#0066cc] text-white rounded">All</button>
+                <button onclick="filterOfficeList('active')" class="text-xs px-3 py-1.5 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Active Only</button>
+                <button onclick="filterOfficeList('tier1')" class="text-xs px-3 py-1.5 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">Tier 1</button>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm data-table">
+                <thead>
+                    <tr class="border-b border-slate-200">
+                        <th class="text-left py-3 px-4">Office</th>
+                        <th class="text-center py-3 px-4">Tier</th>
+                        <th class="text-center py-3 px-4">Status</th>
+                        <th class="text-right py-3 px-4">Staff</th>
+                        <th class="text-right py-3 px-4">Bookings</th>
+                        <th class="text-right py-3 px-4">Revenue</th>
+                        <th class="text-center py-3 px-4">Manager</th>
+                    </tr>
+                </thead>
+                <tbody id="officeDirectoryTable">
+                    <!-- Generated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="tf-card rounded-xl p-6">
+        <div class="flex justify-between items-center mb-2">
+            <div>
+                <h3 class="text-sm font-bold text-[#1e3a5f] uppercase tracking-wider">Recent High-Value Bookings</h3>
+                <p class="table-description">Latest bookings over $2,000 filtered by selected office, destination and flow type</p>
+            </div>
+            <span class="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Last 24 hours</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm data-table">
+                <thead>
+                    <tr class="border-b border-slate-200">
+                        <th class="text-left py-3 px-4">Booking ID</th>
+                        <th class="text-left py-3 px-4">Customer</th>
+                        <th class="text-left py-3 px-4">Destination</th>
+                        <th class="text-center py-3 px-4">Office</th>
+                        <th class="text-center py-3 px-4">Type</th>
+                        <th class="text-right py-3 px-4">Value</th>
+                        <th class="text-center py-3 px-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recentBookingsTable">
+                    <!-- Generated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Brand Footer -->
+    <div class="flex justify-center items-center gap-8 py-6 border-t border-slate-200 mt-8">
+        <img src="nexus-logo.png" alt="Nexus DMC" class="h-8 w-auto opacity-60 hover:opacity-100 transition-opacity">
+        <div class="h-6 w-px bg-slate-300"></div>
+        <img src="tripfactory-logo.png" alt="TripFactory" class="h-6 w-auto opacity-60 hover:opacity-100 transition-opacity">
+        <div class="h-6 w-px bg-slate-300"></div>
+        <span class="text-xs text-slate-400">Powered by ORN Global Network • 36 Offices • 913 Staff</span>
+    </div>
+</main>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-4 right-4 bg-white border-2 border-[#0066cc] px-6 py-4 rounded-lg shadow-xl transform translate-x-full transition-transform duration-300 z-50">
+    <div class="flex items-center gap-3">
+        <i class="fas fa-check-circle text-[#2a9d8f] text-xl"></i>
+        <span id="toastMessage" class="text-[#1e3a5f] font-bold">Action completed</span>
+    </div>
+</div>
+
+<script>
+// Complete ORN Office Data - All 36 Offices
+const officeData = {
+    // Europe (11 offices)
+    uk: { name: 'United Kingdom', city: 'London', country: 'UK', region: 'Europe', tier: '2', status: 'active', staff: 4, manager: 'Ajay Kawa', email: 'ajay.kawa@tripfactory.com', baseMetrics: { bookings: 420, revenue: 680000, enquiries: 2800, conversion: 15.0, margin: 18.2 } },
+    germany: { name: 'Germany', city: 'Frankfurt', country: 'Germany', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 85, revenue: 136000, enquiries: 567, conversion: 15.0, margin: 17.8 } },
+    france: { name: 'France', city: 'Paris', country: 'France', region: 'Europe', tier: '2', status: 'active', staff: 5, manager: 'TBD', baseMetrics: { bookings: 195, revenue: 312000, enquiries: 1300, conversion: 15.0, margin: 18.0 } },
+    italy: { name: 'Italy', city: 'Rome', country: 'Italy', region: 'Europe', tier: '2', status: 'active', staff: 6, manager: 'TBD', baseMetrics: { bookings: 234, revenue: 374400, enquiries: 1560, conversion: 15.0, margin: 17.9 } },
+    czech: { name: 'Czech Republic', city: 'Prague', country: 'Czech Republic', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 65, revenue: 104000, enquiries: 433, conversion: 15.0, margin: 17.5 } },
+    poland: { name: 'Poland', city: 'Warsaw', country: 'Poland', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 58, revenue: 92800, enquiries: 387, conversion: 15.0, margin: 17.5 } },
+    slovakia: { name: 'Slovakia', city: 'Bratislava', country: 'Slovakia', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 42, revenue: 67200, enquiries: 280, conversion: 15.0, margin: 17.5 } },
+    greece: { name: 'Greece', city: 'Athens', country: 'Greece', region: 'Europe', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 78, revenue: 124800, enquiries: 520, conversion: 15.0, margin: 18.1 } },
+    bulgaria: { name: 'Bulgaria', city: 'Sofia', country: 'Bulgaria', region: 'Europe', tier: '2', status: 'active', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    turkey: { name: 'Turkey', city: 'Istanbul', country: 'Turkey', region: 'Europe', tier: '2', status: 'active', staff: 9, manager: 'TBD', baseMetrics: { bookings: 351, revenue: 561600, enquiries: 2340, conversion: 15.0, margin: 18.3 } },
+    spain: { name: 'Spain', city: 'Madrid', country: 'Spain', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    switzerland: { name: 'Switzerland', city: 'Zurich', country: 'Switzerland', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    ireland: { name: 'Ireland', city: 'Dublin', country: 'Ireland', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    austria: { name: 'Austria', city: 'Vienna', country: 'Austria', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    croatia: { name: 'Croatia', city: 'Zagreb', country: 'Croatia', region: 'Europe', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    
+    // Middle East (4 offices)
+    uae: { name: 'UAE', city: 'Dubai', country: 'UAE', region: 'Middle East', tier: '2', status: 'active', staff: 4, manager: 'Ali Asger Lightwala', baseMetrics: { bookings: 312, revenue: 468000, enquiries: 2080, conversion: 15.0, margin: 18.5 } },
+    bahrain: { name: 'Bahrain', city: 'Manama', country: 'Bahrain', region: 'Middle East', tier: '2', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 45, revenue: 72000, enquiries: 300, conversion: 15.0, margin: 18.0 } },
+    qatar: { name: 'Qatar', city: 'Doha', country: 'Qatar', region: 'Middle East', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    oman: { name: 'Oman', city: 'Muscat', country: 'Oman', region: 'Middle East', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    
+    // South Asia (1 office)
+    india: { name: 'India', city: 'Bengaluru', country: 'India', region: 'South Asia', tier: '1', status: 'active', staff: 698, manager: 'Amit Aggarwal', baseMetrics: { bookings: 2842, revenue: 4263000, enquiries: 18947, conversion: 15.0, margin: 16.8 } },
+    
+    // Asia Pacific (7 offices)
+    singapore: { name: 'Singapore', city: 'Singapore', country: 'Singapore', region: 'Asia Pacific', tier: '3', status: 'active', staff: 3, manager: 'Vinay Gupta', baseMetrics: { bookings: 135, revenue: 216000, enquiries: 900, conversion: 15.0, margin: 19.5 } },
+    malaysia: { name: 'Malaysia', city: 'Kuala Lumpur', country: 'Malaysia', region: 'Asia Pacific', tier: '3', status: 'active', staff: 1, manager: 'TBD', baseMetrics: { bookings: 52, revenue: 83200, enquiries: 347, conversion: 15.0, margin: 18.2 } },
+    thailand: { name: 'Thailand', city: 'Bangkok', country: 'Thailand', region: 'Asia Pacific', tier: '2', status: 'active', staff: 7, manager: 'Local Partner', baseMetrics: { bookings: 273, revenue: 436800, enquiries: 1820, conversion: 15.0, margin: 18.8 } },
+    indonesia: { name: 'Indonesia', city: 'Bali', country: 'Indonesia', region: 'Asia Pacific', tier: '2', status: 'active', staff: 8, manager: 'TBD', baseMetrics: { bookings: 312, revenue: 499200, enquiries: 2080, conversion: 15.0, margin: 18.9 } },
+    philippines: { name: 'Philippines', city: 'Manila', country: 'Philippines', region: 'Asia Pacific', tier: '2', status: 'active', staff: 17, manager: 'TBD', baseMetrics: { bookings: 663, revenue: 1060800, enquiries: 4420, conversion: 15.0, margin: 17.5 } },
+    hongkong: { name: 'Hong Kong', city: 'Hong Kong', country: 'Hong Kong', region: 'Asia Pacific', tier: '2', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    
+    // Americas (7 offices)
+    usa: { name: 'United States', city: 'New York', country: 'USA', region: 'Americas', tier: '1', status: 'active', staff: 64, manager: 'Regional Director', baseMetrics: { bookings: 1560, revenue: 2496000, enquiries: 10400, conversion: 15.0, margin: 18.2 } },
+    peru: { name: 'Peru', city: 'Lima', country: 'Peru', region: 'Americas', tier: '2', status: 'active', staff: 30, manager: 'TBD', baseMetrics: { bookings: 585, revenue: 936000, enquiries: 3900, conversion: 15.0, margin: 17.8 } },
+    argentina: { name: 'Argentina', city: 'Buenos Aires', country: 'Argentina', region: 'Americas', tier: '2', status: 'active', staff: 6, manager: 'TBD', baseMetrics: { bookings: 234, revenue: 374400, enquiries: 1560, conversion: 15.0, margin: 17.5 } },
+    mexico: { name: 'Mexico', city: 'Mexico City', country: 'Mexico', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    brazil: { name: 'Brazil', city: 'São Paulo', country: 'Brazil', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    colombia: { name: 'Colombia', city: 'Bogotá', country: 'Colombia', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    ecuador: { name: 'Ecuador', city: 'Quito', country: 'Ecuador', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    chile: { name: 'Chile', city: 'Santiago', country: 'Chile', region: 'Americas', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } },
+    
+    // Oceania (2 offices)
+    australia: { name: 'Australia', city: 'Sydney', country: 'Australia', region: 'Oceania', tier: '2', status: 'active', staff: 23, manager: 'Regional Director', baseMetrics: { bookings: 897, revenue: 1435200, enquiries: 5980, conversion: 15.0, margin: 18.5 } },
+    newzealand: { name: 'New Zealand', city: 'Auckland', country: 'New Zealand', region: 'Oceania', tier: '4', status: 'non-operational', staff: 0, manager: 'TBD', baseMetrics: { bookings: 0, revenue: 0, enquiries: 0, conversion: 0, margin: 0 } }
+};
+
+// Regional Access Mapping
+const regionalAccess = {
+    'regional_europe': ['uk', 'germany', 'france', 'italy', 'czech', 'poland', 'slovakia', 'greece', 'bulgaria', 'turkey', 'spain', 'switzerland', 'ireland', 'austria', 'croatia'],
+    'regional_middle_east': ['uae', 'bahrain', 'qatar', 'oman'],
+    'regional_south_asia': ['india'],
+    'regional_asia_pacific': ['singapore', 'malaysia', 'thailand', 'indonesia', 'philippines', 'hongkong'],
+    'regional_americas': ['usa', 'peru', 'argentina', 'mexico', 'brazil', 'colombia', 'ecuador', 'chile'],
+    'regional_oceania': ['australia', 'newzealand']
+};
+
+// Role Configurations
+const roleConfig = {
+    'board': { 
+        name: 'Board / Global View', 
+        description: 'Full access to all 36 offices worldwide',
+        access: 'Global',
+        offices: Object.keys(officeData)
+    },
+    'regional_europe': { 
+        name: 'Regional Manager - Europe', 
+        description: 'Access to 15 European offices',
+        access: 'Regional',
+        offices: regionalAccess.regional_europe
+    },
+    'regional_middle_east': { 
+        name: 'Regional Manager - Middle East', 
+        description: 'Access to 4 Middle East offices',
+        access: 'Regional',
+        offices: regionalAccess.regional_middle_east
+    },
+    'regional_south_asia': { 
+        name: 'Regional Manager - South Asia', 
+        description: 'Access to India office (Tier 1 Strategic)',
+        access: 'Regional',
+        offices: regionalAccess.regional_south_asia
+    },
+    'regional_asia_pacific': { 
+        name: 'Regional Manager - Asia Pacific', 
+        description: 'Access to 6 Asia Pacific offices',
+        access: 'Regional',
+        offices: regionalAccess.regional_asia_pacific
+    },
+    'regional_americas': { 
+        name: 'Regional Manager - Americas', 
+        description: 'Access to 8 Americas offices',
+        access: 'Regional',
+        offices: regionalAccess.regional_americas
+    },
+    'regional_oceania': { 
+        name: 'Regional Manager - Oceania', 
+        description: 'Access to Australia and New Zealand',
+        access: 'Regional',
+        offices: regionalAccess.regional_oceania
+    }
+};
+
+// Destination Data
+const destinationData = {
+    'Maldives': { bookings: 2840, revenue: 5680000, avgValue: 2000, trend: 'up' },
+    'Thailand': { bookings: 2240, revenue: 3136000, avgValue: 1400, trend: 'up' },
+    'Dubai': { bookings: 1680, revenue: 2520000, avgValue: 1500, trend: 'stable' },
+    'Singapore': { bookings: 1240, revenue: 1860000, avgValue: 1500, trend: 'up' },
+    'Bali': { bookings: 1450, revenue: 2030000, avgValue: 1400, trend: 'up' },
+    'Japan': { bookings: 980, revenue: 1470000, avgValue: 1500, trend: 'up' },
+    'Europe': { bookings: 1240, revenue: 2480000, avgValue: 2000, trend: 'down' },
+    'Sri Lanka': { bookings: 680, revenue: 816000, avgValue: 1200, trend: 'stable' },
+    'Vietnam': { bookings: 620, revenue: 744000, avgValue: 1200, trend: 'up' },
+    'Mauritius': { bookings: 580, revenue: 870000, avgValue: 1500, trend: 'stable' },
+    'Seychelles': { bookings: 420, revenue: 756000, avgValue: 1800, trend: 'up' },
+    'Caribbean': { bookings: 890, revenue: 1780000, avgValue: 2000, trend: 'stable' },
+    'Australia': { bookings: 680, revenue: 1360000, avgValue: 2000, trend: 'up' },
+    'New Zealand': { bookings: 520, revenue: 1040000, avgValue: 2000, trend: 'up' },
+    'Fiji': { bookings: 420, revenue: 630000, avgValue: 1500, trend: 'stable' }
+};
+
+// State Management
+let currentRole = 'board';
+let selectedOffice = 'all';
+let selectedFlow = 'all';
+let selectedDestination = 'all';
+let selectedPeriod = 'month';
+let revenueChart, trendChart;
+
+// Initialize Dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    initOfficeSelector();
+    initDestinationFilter();
+    initCharts();
+    updateDashboard();
+    updateLastUpdated();
+    updateRoleDisplay();
+    
+    setInterval(updateLastUpdated, 60000);
+});
+
+function updateLastUpdated() {
+    const now = new Date();
+    document.getElementById('lastUpdated').textContent = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', minute: '2-digit' 
+    });
+}
+
+function updateRoleDisplay() {
+    const config = roleConfig[currentRole];
+    document.getElementById('currentRoleDisplay').textContent = config.name;
+    document.getElementById('roleAccessDescription').textContent = config.description;
+    document.getElementById('accessLevelBadge').textContent = config.access;
+    
+    const badge = document.getElementById('accessLevelBadge');
+    if (config.access === 'Global') {
+        badge.className = 'px-3 py-1 bg-[#0066cc] text-white rounded-full text-xs font-bold';
+    } else if (config.access === 'Regional') {
+        badge.className = 'px-3 py-1 bg-[#2a9d8f] text-white rounded-full text-xs font-bold';
+    } else {
+        badge.className = 'px-3 py-1 bg-[#ffb703] text-white rounded-full text-xs font-bold';
+    }
+}
+
+function initOfficeSelector() {
+    const selector = document.getElementById('officeSelector');
+    selector.innerHTML = '<option value="all">All Offices (36 locations)</option>';
+    
+    const config = roleConfig[currentRole];
+    const offices = config.offices;
+    
+    // Group by region
+    const regions = {};
+    offices.forEach(key => {
+        const office = officeData[key];
+        if (!regions[office.region]) regions[office.region] = [];
+        regions[office.region].push({ key, ...office });
+    });
+    
+    Object.keys(regions).sort().forEach(region => {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = region;
+        
+        regions[region].forEach(office => {
+            const option = document.createElement('option');
+            option.value = office.key;
+            option.textContent = `${office.name} (${office.city})`;
+            optgroup.appendChild(option);
+        });
+        
+        selector.appendChild(optgroup);
+    });
+}
+
+function initDestinationFilter() {
+    const selector = document.getElementById('destinationFilter');
+    Object.keys(destinationData).sort().forEach(dest => {
+        const option = document.createElement('option');
+        option.value = dest;
+        option.textContent = dest;
+        selector.appendChild(option);
+    });
+}
+
+function changeRole(role) {
+    currentRole = role;
+    selectedOffice = 'all';
+    
+    updateRoleDisplay();
+    initOfficeSelector();
+    updateDashboard();
+    
+    const config = roleConfig[role];
+    showToast(`Switched to ${config.name}`);
+}
+
+function selectOffice(office) {
+    selectedOffice = office;
+    updateDashboard();
+    
+    if (office !== 'all') {
+        const officeName = officeData[office].name;
+        showToast(`Viewing data for ${officeName}`);
+    }
+}
+
+function setFlow(flow) {
+    selectedFlow = flow;
+    
+    document.querySelectorAll('.flow-btn').forEach(btn => {
+        btn.classList.remove('bg-[#0066cc]', 'text-white', 'border-[#0066cc]');
+        btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+    });
+    
+    const activeBtn = document.getElementById(`flow-${flow}`);
+    activeBtn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+    activeBtn.classList.add('bg-[#0066cc]', 'text-white', 'border-[#0066cc]');
+    
+    updateDashboard();
+}
+
+function getAccessibleOffices() {
+    const config = roleConfig[currentRole];
+    
+    if (selectedOffice === 'all') {
+        return config.offices;
+    } else {
+        if (config.offices.includes(selectedOffice)) {
+            return [selectedOffice];
+        } else {
+            return [config.offices[0]];
+        }
+    }
+}
+
+function calculateMetrics() {
+    let totalBookings = 0;
+    let totalRevenue = 0;
+    let totalEnquiries = 0;
+    let totalProfit = 0;
+    let inboundBookings = 0;
+    let outboundBookings = 0;
+    
+    const officesToInclude = getAccessibleOffices();
+    
+    officesToInclude.forEach(key => {
+        const office = officeData[key];
+        if (office.status !== 'active') return;
+        
+        let multiplier = 1;
+        
+        // Apply flow filter
+        if (selectedFlow === 'inbound') {
+            multiplier = 0.4;
+            inboundBookings += office.baseMetrics.bookings * multiplier;
+        } else if (selectedFlow === 'outbound') {
+            multiplier = 0.6;
+            outboundBookings += office.baseMetrics.bookings * multiplier;
+        } else if (selectedFlow === 'domestic') {
+            multiplier = 0.1;
+        } else {
+            inboundBookings += office.baseMetrics.bookings * 0.4;
+            outboundBookings += office.baseMetrics.bookings * 0.6;
+        }
+        
+        // Apply destination filter
+        if (selectedDestination !== 'all') {
+            multiplier *= 0.3;
+        }
+        
+        // Apply period multiplier
+        const periodMultipliers = {
+            'today': 1/30,
+            'week': 7/30,
+            'month': 1,
+            'quarter': 3,
+            'year': 12
+        };
+        multiplier *= periodMultipliers[selectedPeriod] || 1;
+        
+        totalBookings += office.baseMetrics.bookings * multiplier;
+        totalRevenue += office.baseMetrics.revenue * multiplier;
+        totalEnquiries += office.baseMetrics.enquiries * multiplier;
+        totalProfit += (office.baseMetrics.revenue * (office.baseMetrics.margin / 100)) * multiplier;
+    });
+    
+    const conversionRate = totalEnquiries > 0 ? (totalBookings / totalEnquiries) * 100 : 0;
+    const avgBookingValue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
+    const margin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+    
+    return {
+        bookings: Math.round(totalBookings),
+        revenue: totalRevenue,
+        enquiries: Math.round(totalEnquiries),
+        conversion: conversionRate,
+        margin: margin,
+        profit: totalProfit,
+        avgValue: avgBookingValue,
+        inbound: Math.round(inboundBookings),
+        outbound: Math.round(outboundBookings),
+        offices: officesToInclude
+    };
+}
+
+function updateDashboard() {
+    selectedPeriod = document.getElementById('dateRange').value;
+    selectedDestination = document.getElementById('destinationFilter').value;
+    
+    const metrics = calculateMetrics();
+    
+    // Update KPI Cards
+    document.getElementById('kpiBookings').textContent = metrics.bookings.toLocaleString();
+    document.getElementById('kpiRevenue').textContent = '$' + (metrics.revenue / 1000000).toFixed(2) + 'M';
+    document.getElementById('kpiConversion').textContent = metrics.conversion.toFixed(1) + '%';
+    document.getElementById('kpiMargin').textContent = metrics.margin.toFixed(1) + '%';
+    
+    document.getElementById('inboundBookings').textContent = metrics.inbound.toLocaleString();
+    document.getElementById('outboundBookings').textContent = metrics.outbound.toLocaleString();
+    document.getElementById('avgBookingValue').textContent = '$' + Math.round(metrics.avgValue).toLocaleString();
+    document.getElementById('totalEnquiries').textContent = metrics.enquiries.toLocaleString();
+    document.getElementById('grossProfit').textContent = '$' + (metrics.profit / 1000000).toFixed(2) + 'M';
+    
+    // Update flow badge
+    const flowText = selectedFlow === 'all' ? 'All' : selectedFlow.charAt(0).toUpperCase() + selectedFlow.slice(1);
+    document.getElementById('bookingsFlow').textContent = flowText;
+    
+    // Update header stats
+    document.getElementById('headerActiveBookings').textContent = metrics.bookings.toLocaleString();
+    document.getElementById('headerRevenue').textContent = '$' + (metrics.revenue / 1000).toFixed(0) + 'K';
+    
+    // Update all visualizations
+    updateCharts();
+    updateRegionalTable();
+    updateOfficeStatusOverview();
+    updateDestinationsTable();
+    updateOfficeLeaderboard();
+    updateOfficeDirectory();
+    updateRecentBookings();
+}
+
+function initCharts() {
+    // Revenue Chart
+    const revCtx = document.getElementById('revenueChart').getContext('2d');
+    revenueChart = new Chart(revCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Revenue ($)',
+                data: [],
+                backgroundColor: '#0066cc',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + (context.raw / 1000).toFixed(0) + 'K';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => '$' + (value / 1000) + 'K'
+                    }
+                }
+            }
+        }
+    });
+    
+    // Trend Chart
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    trendChart = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Bookings',
+                data: [650, 720, 810, 890, 950, 1020],
+                borderColor: '#0066cc',
+                backgroundColor: 'rgba(0,102,204,0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+function updateCharts() {
+    const metrics = calculateMetrics();
+    const offices = metrics.offices.filter(key => officeData[key].status === 'active');
+    
+    // Update Revenue Chart
+    const labels = offices.map(key => officeData[key].name);
+    const data = offices.map(key => {
+        const office = officeData[key];
+        let multiplier = 1;
+        if (selectedFlow === 'inbound') multiplier = 0.4;
+        else if (selectedFlow === 'outbound') multiplier = 0.6;
+        else if (selectedFlow === 'domestic') multiplier = 0.1;
+        
+        if (selectedDestination !== 'all') multiplier *= 0.3;
+        
+        const periodMultipliers = { 'today': 1/30, 'week': 7/30, 'month': 1, 'quarter': 3, 'year': 12 };
+        multiplier *= periodMultipliers[selectedPeriod] || 1;
+        
+        return office.baseMetrics.revenue * multiplier;
+    });
+    
+    revenueChart.data.labels = labels;
+    revenueChart.data.datasets[0].data = data;
+    revenueChart.update();
+    
+    // Update Trend Chart based on selected metric
+    const metric = document.getElementById('trendMetric').value;
+    const baseValue = metric === 'bookings' ? 800 : metric === 'revenue' ? 1280000 : 5000;
+    const multiplier = selectedFlow === 'all' ? 1 : selectedFlow === 'inbound' ? 0.4 : selectedFlow === 'outbound' ? 0.6 : 0.1;
+    
+    trendChart.data.datasets[0].label = metric.charAt(0).toUpperCase() + metric.slice(1);
+    trendChart.data.datasets[0].data = Array.from({length: 6}, (_, i) => 
+        Math.round(baseValue * multiplier * (0.8 + i * 0.06))
+    );
+    trendChart.update();
+}
+
+function updateRegionalTable() {
+    const tbody = document.getElementById('regionalTable');
+    const metrics = calculateMetrics();
+    const accessibleOffices = metrics.offices;
+    
+    // Calculate by region
+    const regionData = {};
+    accessibleOffices.forEach(key => {
+        const office = officeData[key];
+        if (office.status !== 'active') return;
+        
+        if (!regionData[office.region]) {
+            regionData[office.region] = { offices: 0, bookings: 0, revenue: 0, topOffice: null, topRevenue: 0 };
+        }
+        
+        let multiplier = 1;
+        if (selectedFlow === 'inbound') multiplier = 0.4;
+        else if (selectedFlow === 'outbound') multiplier = 0.6;
+        else if (selectedFlow === 'domestic') multiplier = 0.1;
+        
+        if (selectedDestination !== 'all') multiplier *= 0.3;
+        
+        const periodMultipliers = { 'today': 1/30, 'week': 7/30, 'month': 1, 'quarter': 3, 'year': 12 };
+        multiplier *= periodMultipliers[selectedPeriod] || 1;
+        
+        const officeRevenue = office.baseMetrics.revenue * multiplier;
+        
+        regionData[office.region].offices++;
+        regionData[office.region].bookings += office.baseMetrics.bookings * multiplier;
+        regionData[office.region].revenue += officeRevenue;
+        
+        if (officeRevenue > regionData[office.region].topRevenue) {
+            regionData[office.region].topRevenue = officeRevenue;
+            regionData[office.region].topOffice = office.name;
+        }
+    });
+    
+    tbody.innerHTML = Object.entries(regionData).map(([region, data]) => {
+        const avgValue = data.bookings > 0 ? data.revenue / data.bookings : 0;
+        return `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="py-3 px-4 font-semibold text-[#1e3a5f]">${region}</td>
+                <td class="py-3 px-4 text-center mono">${data.offices}</td>
+                <td class="py-3 px-4 text-right mono">${Math.round(data.bookings).toLocaleString()}</td>
+                <td class="py-3 px-4 text-right mono font-semibold">$${(data.revenue / 1000).toFixed(0)}K</td>
+                <td class="py-3 px-4 text-right mono">$${Math.round(avgValue)}</td>
+                <td class="py-3 px-4 text-center text-xs font-semibold text-[#0066cc]">${data.topOffice || 'N/A'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateOfficeStatusOverview() {
+    const container = document.getElementById('officeStatusOverview');
+    const metrics = calculateMetrics();
+    const accessibleOffices = metrics.offices;
+    
+    const stats = { tier1: 0, tier2: 0, tier3: 0, tier4: 0, active: 0, nonOp: 0, totalStaff: 0 };
+    
+    accessibleOffices.forEach(key => {
+        const office = officeData[key];
+        stats['tier' + office.tier]++;
+        stats[office.status === 'active' ? 'active' : 'nonOp']++;
+        stats.totalStaff += office.staff;
+    });
+    
+    container.innerHTML = `
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center gap-2">
+                <span class="tier-badge tier-1">Tier 1</span>
+                <span class="text-sm text-slate-600">Strategic</span>
+            </div>
+            <span class="font-bold text-[#1e3a5f]">${stats.tier1}</span>
+        </div>
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center gap-2">
+                <span class="tier-badge tier-2">Tier 2</span>
+                <span class="text-sm text-slate-600">Growth</span>
+            </div>
+            <span class="font-bold text-[#1e3a5f]">${stats.tier2}</span>
+        </div>
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center gap-2">
+                <span class="tier-badge tier-3">Tier 3</span>
+                <span class="text-sm text-slate-600">Emerging</span>
+            </div>
+            <span class="font-bold text-[#1e3a5f]">${stats.tier3}</span>
+        </div>
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div class="flex items-center gap-2">
+                <span class="tier-badge tier-4">Tier 4</span>
+                <span class="text-sm text-slate-600">Opportunity</span>
+            </div>
+            <span class="font-bold text-[#1e3a5f]">${stats.tier4}</span>
+        </div>
+    `;
+}
+
+function updateDestinationsTable() {
+    const tbody = document.getElementById('destinationsTable');
+    const metrics = calculateMetrics();
+    
+    let destinations = Object.entries(destinationData);
+    
+    if (selectedDestination !== 'all') {
+        destinations = destinations.filter(([name]) => name === selectedDestination);
+    }
+    
+    // Apply flow filter to destination data
+    destinations = destinations.map(([name, data]) => {
+        let multiplier = 1;
+        if (selectedFlow === 'inbound') multiplier = 0.6;
+        else if (selectedFlow === 'outbound') multiplier = 0.4;
+        else if (selectedFlow === 'domestic') multiplier = 0.1;
+        return [name, { ...data, bookings: data.bookings * multiplier, revenue: data.revenue * multiplier }];
+    });
+    
+    destinations.sort((a, b) => b[1].revenue - a[1].revenue);
+    destinations = destinations.slice(0, 6);
+    
+    tbody.innerHTML = destinations.map(([name, data]) => {
+        const trendIcon = data.trend === 'up' ? '<i class="fas fa-arrow-up text-green-500"></i>' : 
+                         data.trend === 'down' ? '<i class="fas fa-arrow-down text-red-500"></i>' : 
+                         '<i class="fas fa-minus text-yellow-500"></i>';
+        
+        return `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="py-3 px-4 font-semibold text-[#1e3a5f]">${name}</td>
+                <td class="py-3 px-4 text-right mono">${Math.round(data.bookings).toLocaleString()}</td>
+                <td class="py-3 px-4 text-right mono font-semibold">$${(data.revenue / 1000).toFixed(0)}K</td>
+                <td class="py-3 px-4 text-center">${trendIcon}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateOfficeLeaderboard() {
+    const container = document.getElementById('officeLeaderboard');
+    const metrics = calculateMetrics();
+    const accessibleOffices = metrics.offices.filter(key => officeData[key].status === 'active');
+    
+    const offices = accessibleOffices.map(key => {
+        const office = officeData[key];
+        let multiplier = 1;
+        if (selectedFlow === 'inbound') multiplier = 0.4;
+        else if (selectedFlow === 'outbound') multiplier = 0.6;
+        else if (selectedFlow === 'domestic') multiplier = 0.1;
+        
+        if (selectedDestination !== 'all') multiplier *= 0.3;
+        
+        const periodMultipliers = { 'today': 1/30, 'week': 7/30, 'month': 1, 'quarter': 3, 'year': 12 };
+        multiplier *= periodMultipliers[selectedPeriod] || 1;
+        
+        return {
+            key,
+            name: office.name,
+            revenue: office.baseMetrics.revenue * multiplier,
+            bookings: office.baseMetrics.bookings * multiplier
+        };
+    });
+    
+    offices.sort((a, b) => b.revenue - a.revenue);
+    
+    container.innerHTML = offices.slice(0, 5).map((office, index) => {
+        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+        const percent = offices[0].revenue > 0 ? Math.round((office.revenue / offices[0].revenue) * 100) : 0;
+        
+        return `
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer" onclick="selectOffice('${office.key}')">
+                <span class="text-lg">${medal}</span>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-[#1e3a5f]">${office.name}</span>
+                        <span class="text-xs font-bold mono">$${(office.revenue / 1000).toFixed(0)}K</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-[#0066cc] h-2 rounded-full" style="width: ${percent}%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateOfficeDirectory() {
+    const tbody = document.getElementById('officeDirectoryTable');
+    const metrics = calculateMetrics();
+    const accessibleOffices = metrics.offices;
+    
+    const offices = accessibleOffices.map(key => ({
+        key,
+        ...officeData[key]
+    }));
+    
+    offices.sort((a, b) => b.baseMetrics.revenue - a.baseMetrics.revenue);
+    
+    tbody.innerHTML = offices.map(office => {
+        const tierClass = `tier-${office.tier}`;
+        const tierName = office.tier === '1' ? 'Tier 1' : office.tier === '2' ? 'Tier 2' : office.tier === '3' ? 'Tier 3' : 'Tier 4';
+        const statusClass = office.status === 'active' ? 'status-active' : 'status-non-op';
+        const statusText = office.status === 'active' ? 'Active' : 'Non-Operational';
+        
+        return `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="py-3 px-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://flagcdn.com/w20/${getCountryCode(office.country)}.png" class="w-5 h-auto">
+                        <div>
+                            <div class="font-semibold text-sm text-[#1e3a5f]">${office.name}</div>
+                            <div class="text-xs text-slate-500">${office.city}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="py-3 px-4 text-center"><span class="tier-badge ${tierClass}">${tierName}</span></td>
+                <td class="py-3 px-4 text-center"><span class="text-xs font-semibold ${statusClass}">${statusText}</span></td>
+                <td class="py-3 px-4 text-right mono">${office.staff}</td>
+                <td class="py-3 px-4 text-right mono">${office.baseMetrics.bookings.toLocaleString()}</td>
+                <td class="py-3 px-4 text-right mono font-semibold">$${(office.baseMetrics.revenue / 1000).toFixed(0)}K</td>
+                <td class="py-3 px-4 text-center text-xs">${office.manager}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateRecentBookings() {
+    const tbody = document.getElementById('recentBookingsTable');
+    const metrics = calculateMetrics();
+    const accessibleOffices = metrics.offices;
+    
+    const sampleBookings = [
+        { id: 'ORN-284756', customer: 'Rajesh Kumar', destination: 'Maldives', office: 'india', type: 'outbound', value: 4200, status: 'confirmed' },
+        { id: 'ORN-284755', customer: 'Sarah Johnson', destination: 'Thailand', office: 'uk', type: 'outbound', value: 2800, status: 'pending' },
+        { id: 'ORN-284754', customer: 'Ahmed Hassan', destination: 'Dubai', office: 'uae', type: 'inbound', value: 1500, status: 'confirmed' },
+        { id: 'ORN-284753', customer: 'Li Wei', destination: 'Singapore', office: 'singapore', type: 'inbound', value: 3200, status: 'confirmed' },
+        { id: 'ORN-284752', customer: 'Emma Wilson', destination: 'Japan', office: 'australia', type: 'outbound', value: 5600, status: 'processing' },
+        { id: 'ORN-284751', customer: 'Michael Chen', destination: 'Bali', office: 'singapore', type: 'outbound', value: 3400, status: 'confirmed' },
+        { id: 'ORN-284750', customer: 'Priya Sharma', destination: 'Europe', office: 'india', type: 'outbound', value: 4800, status: 'confirmed' },
+        { id: 'ORN-284749', customer: 'James Miller', destination: 'Caribbean', office: 'usa', type: 'outbound', value: 6200, status: 'pending' }
+    ];
+    
+    let bookings = sampleBookings.filter(b => accessibleOffices.includes(b.office));
+    
+    if (selectedDestination !== 'all') {
+        bookings = bookings.filter(b => b.destination === selectedDestination);
+    }
+    
+    if (selectedFlow !== 'all') {
+        bookings = bookings.filter(b => b.type === selectedFlow);
+    }
+    
+    bookings = bookings.slice(0, 6);
+    
+    tbody.innerHTML = bookings.map(booking => {
+        const office = officeData[booking.office];
+        const statusColors = {
+            'confirmed': 'bg-green-100 text-green-700',
+            'pending': 'bg-yellow-100 text-yellow-700',
+            'processing': 'bg-blue-100 text-blue-700'
+        };
+        
+        return `
+            <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="py-3 px-4 font-mono text-xs text-[#0066cc]">${booking.id}</td>
+                <td class="py-3 px-4 font-semibold text-sm">${booking.customer}</td>
+                <td class="py-3 px-4 text-sm">${booking.destination}</td>
+                <td class="py-3 px-4 text-center">
+                    <img src="https://flagcdn.com/w20/${getCountryCode(office.country)}.png" class="w-5 h-auto mx-auto" title="${office.name}">
+                </td>
+                <td class="py-3 px-4 text-center">
+                    <span class="flow-badge flow-${booking.type}">${booking.type}</span>
+                </td>
+                <td class="py-3 px-4 text-right font-bold mono">$${booking.value.toLocaleString()}</td>
+                <td class="py-3 px-4 text-center">
+                    <span class="px-2 py-1 rounded text-xs font-bold ${statusColors[booking.status]}">${booking.status}</span>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function getCountryCode(country) {
+    const codes = {
+        'UK': 'gb', 'Germany': 'de', 'France': 'fr', 'Italy': 'it', 'Czech Republic': 'cz',
+        'Poland': 'pl', 'Slovakia': 'sk', 'Greece': 'gr', 'Bulgaria': 'bg', 'Turkey': 'tr',
+        'Spain': 'es', 'Switzerland': 'ch', 'Ireland': 'ie', 'Austria': 'at', 'Croatia': 'hr',
+        'UAE': 'ae', 'Bahrain': 'bh', 'Qatar': 'qa', 'Oman': 'om',
+        'India': 'in', 'Singapore': 'sg', 'Malaysia': 'my', 'Thailand': 'th', 'Indonesia': 'id',
+        'Philippines': 'ph', 'Hong Kong': 'hk',
+        'USA': 'us', 'Peru': 'pe', 'Argentina': 'ar', 'Mexico': 'mx', 'Brazil': 'br',
+        'Colombia': 'co', 'Ecuador': 'ec', 'Chile': 'cl',
+        'Australia': 'au', 'New Zealand': 'nz'
+    };
+    return codes[country] || 'un';
+}
+
+function toggleChartType(chart, type) {
+    if (chart === 'revenue') {
+        revenueChart.config.type = type;
+        revenueChart.update();
+    }
+}
+
+function viewAllRegions() {
+    showToast('Opening detailed regional report...');
+}
+
+function viewAllDestinations() {
+    showToast('Opening full destination report...');
+}
+
+function filterOfficeList(filter) {
+    showToast(`Filtering offices: ${filter}`);
+    // Implementation would filter the office directory table
+}
+
+function exportReport() {
+    showToast('Exporting dashboard report...');
+    setTimeout(() => {
+        showToast('Report downloaded successfully!');
+    }, 1500);
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMessage').textContent = message;
+    toast.classList.remove('translate-x-full');
+    setTimeout(() => toast.classList.add('translate-x-full'), 3000);
+}
+</script>
+
+</body>
+</html>
